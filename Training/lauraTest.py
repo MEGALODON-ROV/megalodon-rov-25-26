@@ -2,15 +2,17 @@
 # (front left, front right, back left, back right)
 # Lx = side to side, right = positive (1900, 1100, 1100, 1900)
 # Ly = forward/back, forward = positive (1900, 1900, 1900, 1900)
-# Rx → rotation of joystick (left = positive direction, right = negative direction)
+# Rx --> rotation of joystick, left = positive
         # (1100, 1900, 1100, 1900) --> if drawing the vectors, it is a diamond shape
-# A / B → buttons for up /down respectively (1 = full power, 0 = no power)
+# A / B --> buttons for up /down respectively (only full power up/down or no movement --> binary)
 
-frontLeftThruster = 1500
-frontRightThruster = 1500
-backLeftThruster = 1500
-backRightThruster = 1500
-verticalThruster = 1500
+thrusters = {
+    "frontLeft": 1500,
+    "frontRight": 1500,
+    "backLeft": 1500,
+    "backRight": 1500,
+    "vertical": 1500
+}
 
 def scaleInput(joystickInput):
     if joystickInput < 0.1 and joystickInput > -0.1:
@@ -25,48 +27,52 @@ def roundThrusterValue(thrusterValue):
     return int(thrusterValue)
 
 def moveForwardBackwards(Ly, percentVert):
-    fwdPower = scaleInput(Ly) * percentVert     # scale to change how effective moving joystick is
-    frontLeftThruster = roundThrusterValue(fwdPower + 1500)
-    frontRightThruster = roundThrusterValue(fwdPower + 1500)
-    backLeftThruster = roundThrusterValue(fwdPower + 1500)
-    backRightThruster = roundThrusterValue(fwdPower + 1500)
-    return (frontLeftThruster, frontRightThruster, backLeftThruster, backRightThruster)
+    fwdPower = scaleInput(Ly) * percentVert     # percentVert to change how
+                                                # effective moving joystick is
+    for i in thrusters:
+        thrusters[i] = roundThrusterValue(fwdPower + 1500)
+    return (thrusters["frontLeft"], thrusters["frontRight"], 
+            thrusters["backLeft"], thrusters["backRight"])
 
 def crabbing(Lx, percentHoriz):
-    crabPower = scaleInput(Lx) * percentHoriz
-    frontLeftThruster = roundThrusterValue(crabPower + 1500)
-    frontRightThruster = roundThrusterValue(-crabPower + 1500)
-    backLeftThruster = roundThrusterValue(-crabPower + 1500)
-    backRightThruster = roundThrusterValue(crabPower + 1500)
-    return (frontLeftThruster, frontRightThruster, backLeftThruster, backRightThruster)
+    crabPower = scaleInput(Lx) * percentHoriz   # percentHoriz to change how
+                                                # effective moving joystick is
+    thrusters["frontLeft"] = roundThrusterValue(crabPower + 1500)
+    thrusters["frontRight"] = roundThrusterValue(-crabPower + 1500)
+    thrusters["backLeft"] = thrusters["frontRight"]
+    thrusters["backRight"] = thrusters["frontLeft"]
+    return (thrusters["frontLeft"], thrusters["frontRight"], 
+            thrusters["backLeft"], thrusters["backRight"])
 
 def rotate(Rx):
     rotatePower = scaleInput(Rx)
-    frontLeftThruster = roundThrusterValue(-rotatePower + 1500)
-    frontRightThruster = roundThrusterValue(frontLeftThruster)
-    backLeftThruster = roundThrusterValue(-rotatePower + 1500)
-    backRightThruster = roundThrusterValue(backLeftThruster)
-    return (frontLeftThruster, frontRightThruster, backLeftThruster, backRightThruster)
+
+    thrusters["frontLeft"] = roundThrusterValue(-rotatePower + 1500)
+    thrusters["frontRight"] = roundThrusterValue(rotatePower + 1500)
+    thrusters["backLeft"] = thrusters["frontLeft"]
+    thrusters["backRight"] = thrusters["frontRight"]
+    return (thrusters["frontLeft"], thrusters["frontRight"], 
+            thrusters["backLeft"], thrusters["backRight"])
 
 def verticalMovement(A, B):
     if (A == 1):
-        verticalThruster = 1900
+        thrusters["vertical"] = 1900
     elif (B == 1):
-        verticalThruster = 1100
+        thrusters["vertical"] = 1100
     else:
-        verticalThruster = 1500
+        thrusters["vertical"] = 1500
 
-    return verticalThruster
+    return thrusters["vertical"]
 
 def convertForArduino():
     parts = [
-        str(frontLeftThruster),  "+",
-        str(frontRightThruster), "-",
-        str(backLeftThruster),   "=",
-        str(backRightThruster),  "/",
-        str(verticalThruster),   ")",
-        str(verticalThruster),   "(",
-        str(verticalThruster),   "!",
-        str(verticalThruster)
+        str(thrusters["frontLeft"]),  "+",
+        str(thrusters["frontRight"]), "-",
+        str(thrusters["backLeft"]),   "=",
+        str(thrusters["backRight"]),  "/",
+        str(thrusters["vertical"]),   ")",      # there are 4 vertical thrusters
+        str(thrusters["vertical"]),   "(",      # but they are all have the same output
+        str(thrusters["vertical"]),   "!",
+        str(thrusters["vertical"])
     ]
     return "".join(parts)
