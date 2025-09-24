@@ -1,4 +1,5 @@
 
-horizontal_thrusters = 1500
+def joystick_value(Lx):
+    return (Lx * 400)
 
     
