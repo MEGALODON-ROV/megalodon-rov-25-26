@@ -12,7 +12,7 @@ def limit_wpm(thrusters):
     elif thrusters < 1100:
         return 1100
     return int(thrusters)
-
+# thruster values
 horizontal_thrusters = [1500, 1500, 1500, 1500]
 vertical_thrusters = [1500, 1500, 1500, 1500]
 # thruster[0] = front left
@@ -23,7 +23,7 @@ def joystick(Ly, Lx, Rx, A,B):
     Ly = joystick_value(Ly)
     Lx = joystick_value(Lx)
     Rx = joystick_value(Rx)
-
+    #scaling percentage
     percent_horiz = 0.9
     percent_vert = 0.5
 
@@ -55,29 +55,28 @@ def joystick(Ly, Lx, Rx, A,B):
     fl -= Rx
     br += Rx
     bl -= Rx
+    #vertical 
+    idk = 0
+    if A == 1:
+        idk = 400
+    elif B == 1:
+        idk = -400
+    vertical1 = 1500 + idk * percent_vert
+    vertical2 = 1500 + idk * percent_vert
+    vertical3 = 1500 + idk * percent_vert
+    vertical4 = 1500 + idk * percent_vert
+    # limit wpm
+    fl = limit_wpm(fl)
+    fr = limit_wpm(fr)
+    bl = limit_wpm(bl)
+    br = limit_wpm(br)
 
-idk = 0
-if A == 1:
-    idk = 400
-elif B == 1:
-    idk = -400
-vertical1 = 1500 + idk * percent_vert
-vertical2 = 1500 + idk * percent_vert
-vertical3 = 1500 + idk * percent_vert
-vertical4 = 1500 + idk * percent_vert
+    vertical1 = limit_wpm(vertical1)
+    vertical2 = limit_wpm(vertical2)
+    vertical3 = limit_wpm(vertical3)
+    vertical4 = limit_wpm(vertical4)
 
-fl = limit_wpm(fl)
-fr = limit_wpm(fr)
-bl = limit_wpm(bl)
-br = limit_wpm(br)
-
-vertical1 = limit_wpm(vertical1)
-vertical2 = limit_wpm(veritcal2)
-vertical3 = limit_wpm(vertical3)
-vertical4 = limit_wpm(vertical4)
-
-return fl, fr, bl, br,
+    return fl, fr, bl, br, vertical1, vertical2, vertical3, vertical4
 
 def arduino_prep():
- 
-    
+ str(vertical_thrusters[0]) + "," + str(vertical_thrusters[1]) + "/" + str(vertical_thrusters[2]) + ":" + str(vertical_thrusters[3]) + "#" + str(horizontal_thrusters[0]) + "*" + str(horizontal_thrusters[1]) + "!" + str(horizontal_thrusters[2]) + "-" + str(horizontal_thrusters[3])
