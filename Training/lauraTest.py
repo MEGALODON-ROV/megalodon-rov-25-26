@@ -26,7 +26,7 @@ def roundThrusterValue(thrusterValue):
         return 1100
     return int(thrusterValue)
 
-def moveForwardBackwards(Ly, percentVert):
+def moveForwardBackwards(Ly, percentVert = 1):
     fwdPower = scaleInput(Ly) * percentVert     # percentVert to change how
                                                 # effective moving joystick is
     for i in thrusters:
@@ -34,7 +34,7 @@ def moveForwardBackwards(Ly, percentVert):
     return (thrusters["frontLeft"], thrusters["frontRight"], 
             thrusters["backLeft"], thrusters["backRight"])
 
-def crabbing(Lx, percentHoriz):
+def crabbing(Lx, percentHoriz = 1):
     crabPower = scaleInput(Lx) * percentHoriz   # percentHoriz to change how
                                                 # effective moving joystick is
     thrusters["frontLeft"] = roundThrusterValue(crabPower + 1500)
@@ -64,7 +64,13 @@ def verticalMovement(A, B):
 
     return thrusters["vertical"]
 
-def convertForArduino():
+def convertForArduino(Ly = 0, percentVert = 1, Lx = 0, percentHoriz = 1, Rx = 0, A = 0, B = 0):
+    moveForwardBackwards(Ly, percentVert)
+    crabbing(Lx, percentHoriz)
+    rotate(Rx)
+    verticalMovement(A, B)
+
+    # format for arduino
     parts = [
         str(thrusters["frontLeft"]),  "+",
         str(thrusters["frontRight"]), "-",
