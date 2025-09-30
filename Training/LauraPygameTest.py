@@ -41,18 +41,21 @@ while loop:
 
     # gotten from prev year's code
     Lx = message[0]
-    Ly = message[1]
+    print("Lx: {}".format(Lx))
+    Ly = message[1]*-1
+    print("Ly: {}".format(Ly))
     Rx = message[3]
-    A = message[5]  # orange button
-    B = message[6]  # button behind orange button
+    print("Rx: {}".format(Rx))
+    A = message[6]  # orange button
+    print("A: {}".format(A))
+    B = message[7]  # button behind orange button
+    print("B: {}".format(B))
 
     # convert to arduino format to prepare to send
     messageToSend = lauraTest.convertForArduino(Ly, 1, Lx, 1, Rx, A, B)
     messageToSend = messageToSend.encode("ascii")
     print("message to send: {}".format(messageToSend))
 
-    print("type of joystick variable: {}".format(type(joystick)))
-
-    sleep(0.1)  # add delay to avoid spamming output
+    sleep(0.5)  # add delay to avoid spamming output
 
 pygame.quit()  # stops pygame cleanly
