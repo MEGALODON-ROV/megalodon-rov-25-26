@@ -39,7 +39,7 @@ while loop:
             message.append(joystick.get_button(i))
             print("Button {} value: {}".format(i, joystick.get_button(i)))
 
-    # gotten from prev year's code
+    # gotten from testing with xbox controller
     Lx = message[0]
     print("Lx: {}".format(Lx))
     Ly = message[1]*-1
