@@ -76,7 +76,5 @@ def joystick(Ly, Lx, Rx, A,B):
     vertical3 = limit_wpm(vertical3)
     vertical4 = limit_wpm(vertical4)
 
-    return fl, fr, bl, br, vertical1, vertical2, vertical3, vertical4
+    return str(fl) + ",", str(fr) + "/", str(bl) + ":", str(br) + "#", str(vertical1) + "*", str(vertical2) + "!", str(vertical3) + "-", str(vertical4) + "/"
 
-def arduino_prep():
- str(vertical_thrusters[0]) + "," + str(vertical_thrusters[1]) + "/" + str(vertical_thrusters[2]) + ":" + str(vertical_thrusters[3]) + "#" + str(horizontal_thrusters[0]) + "*" + str(horizontal_thrusters[1]) + "!" + str(horizontal_thrusters[2]) + "-" + str(horizontal_thrusters[3])
