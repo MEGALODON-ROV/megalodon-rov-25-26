@@ -1,24 +1,13 @@
 import pygame
 from time import sleep
 
-joystick = pygame.joystick.Joystick(0)
-joystick.init
+pygame.init()
+pygame.joystick.init()
 
-pygame.init
-pygame.joystick.init
+joystick = pygame.joystick.Joystick(0)
+joystick.init()
 
 loop = True
-
-while loop:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            loop = False
-
-    joystickX = joystick.get_axis(0)
-    joystickY = joystick.get_axis(1)
-    joystickR = joystick.get_axis(2)
-    joystickA = joystick.get_button(0)
-    joystickB = joystick.get_button(1)
 
 def clamp(value, minVal, maxVal):
     newVal = max(min(maxVal, value), minVal)
@@ -57,12 +46,12 @@ def thrusterMap(Lx: int, Ly: int, Rx: int, A: int, B: int, xPercent: int, yPerce
     bl = round(clamp(bl - (Rotation * 200), 1100, 1900))
     br = round(clamp(br + (Rotation * 200), 1100, 1900))
 
-    if A == 1 and B == 0:
+    if A > 0.5 and B < 0.5:
         flV = 1900
         frV = 1900
         blV = 1900
         brV = 1900
-    elif B == 1 and A == 0:
+    elif B > 0.5 and A < 0.5:
         flV = 1100
         frV = 1100
         blV = 1100
@@ -77,7 +66,24 @@ def thrusterMap(Lx: int, Ly: int, Rx: int, A: int, B: int, xPercent: int, yPerce
     #fl, fr, bl, br, flV, frV, blV, brV
     
     return output
+#X - right, Y - forward 
 
-print(thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1))
+timer = 0
+
+while loop and timer < 200:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            loop = False
+
+    joystickX = joystick.get_axis(2)
+    joystickY = -joystick.get_axis(3)
+    joystickR = -joystick.get_axis(0)
+    joystickA = clamp(-joystick.get_axis(1), 0, 1)
+    joystickB = clamp(joystick.get_axis(1), 0, 1)
+    print(thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1))
+    timer += 1
+    sleep(0.1)
+
+print("end")
 
 pygame.quit()
