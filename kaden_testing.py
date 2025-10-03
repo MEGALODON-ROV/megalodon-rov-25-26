@@ -1,37 +1,30 @@
-def where_we_goin(ly):
- return ly*400
+def thruster_output(Lx, Ly, Rx, A, B):
+  base = 1500
+  scale = 400
 
-FL = 1500
-FR = 1500
-BL = 1500
-BR = 1500
+  # Horizontal thrusters
+  FL = base + Ly*scale + Lx*scale - Rx*scale
+  FR = base + Ly*scale - Lx*scale + Rx*scale
+  BL = base + Ly*scale - Lx*scale - Rx*scale
+  BR = base + Ly*scale + Lx*scale + Rx*scale
 
-def left_right(ly):
-  FL = 1500+where_we_goin(ly)
-  FR = 1500-where_we_goin(ly)
-  BL = 1500+where_we_goin(ly)
-  BR = 1500-where_we_goin(ly)
-  return FL, FR, BL, BR
+  # Vertical thrusters
+  vert = (A - B) * scale
+  VFL = VFR = VBL = VBR = base + vert
 
+  thrusters = [FL, FR, BL, BR, VFL, VFR, VBL, VBR]
+  # make thrusters 1100-1900
+  forsure = []
+  for t in thrusters:
+      if t > 1900:
+          forsure.append(1900)
+      elif t < 1100:
+          forsure.append(1100)
+      else:
+          forsure.append(int(t))
+  thrusters = forsure
 
-def forward_backward(lx): 
-    FL = 1500+where_we_goin(lx)
-    FR = 1500+where_we_goin(lx)
-    BL = 1500+where_we_goin(lx)
-    BR = 1500+where_we_goin(lx)
-    return FL, FR, BL, BR
-
-def rotate(rx):
-   FL = 1500-where_we_goin(rx)
-   FR = 1500+where_we_goin(rx)
-   BL = 1500-where_we_goin(rx)
-   BR = 1500+where_we_goin(rx)
-   return FL, FR, BL, BR
-  
-n = int(input())
-print("If n is 1 then left, if n is -1 then right")
-print(left_right(n))
-print("If n is 1 then forward, if n is -1 then backward")
-print(forward_backward(n))
-print("If n is 1 then clockwise, if n is -1 then counterclockwise")
-print(rotate(n))
+  # Format output
+  horiz = f"{thrusters[0]}-{thrusters[1]}={thrusters[2]}+{thrusters[3]}"
+  vert  = f"{thrusters[4]},{thrusters[5]}]{thrusters[6]}/{thrusters[7]}"
+  return horiz + "*" + vert
