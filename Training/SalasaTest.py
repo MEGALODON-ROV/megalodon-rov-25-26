@@ -20,12 +20,10 @@ vertical_thrusters = [1500, 1500, 1500, 1500]
 # thruster[2] = back right
 # thruster[3] = back left
 def joystick(Ly, Lx, Rx, A,B):
-    Ly = joystick_value(Ly)
-    Lx = joystick_value(Lx)
-    Rx = joystick_value(Rx)
+    
     #scaling percentage
-    percent_horiz = 0.9
-    percent_vert = 0.5
+    percent_horiz = 1
+    percent_vert = 1
 
     Ly = joystick_value(Ly) * percent_horiz
     Lx = joystick_value(Lx) * percent_horiz
@@ -66,15 +64,14 @@ def joystick(Ly, Lx, Rx, A,B):
     vertical3 = 1500 + idk * percent_vert
     vertical4 = 1500 + idk * percent_vert
     # limit wpm
-    fl = 1500 + limit_wpm(fl)
-    fr = 1500 + limit_wpm(fr)
-    bl = 1500 + limit_wpm(bl)
-    br = 1500 + limit_wpm(br)
+    fl = limit_wpm(fl)
+    fr = limit_wpm(fr)
+    bl = limit_wpm(bl)
+    br = limit_wpm(br)
 
-    vertical1 = 1500 + limit_wpm(vertical1)
-    vertical2 = 1500 + limit_wpm(vertical2)
-    vertical3 = 1500 + limit_wpm(vertical3)
-    vertical4 = 1500 + limit_wpm(vertical4)
+    vertical1 = limit_wpm(vertical1)
+    vertical2 = limit_wpm(vertical2)
+    vertical3 = limit_wpm(vertical3)
+    vertical4 = limit_wpm(vertical4)
 
-    return str(fl) + ",", str(fr) + "/", str(bl) + ":", str(br) + "#", str(vertical1) + "*", str(vertical2) + "!", str(vertical3) + "-", str(vertical4) + "/"
-
+    return str(fl) + "," + str(fr) + "/" + str(bl) + ":" + str(br) + "#" + str(vertical1) + "*" + str(vertical2) + "!" + str(vertical3) + "-" + str(vertical4) + "/"
