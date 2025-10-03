@@ -22,16 +22,29 @@ while loop:
         joystick.init()
         print(f'Name: {joystick.get_name}')
 
-    #read all axes
-    axes = joystick.get_numaxes()
-    for yx in range(axes):
-        axis = joystick.get_axis(yx)
-        print(f'Name: {yx} Value: {axis} ')
-
-    buttons = joystick.get_numbuttons()
-    for i in range(buttons):
-        butt = joystick.get_button(i)
-        print(f'number: {i} return {butt}')
+        #read all axes
+        message = []
+        axes = joystick.get_numaxes()
+        for yx in range(axes):
+            axis = joystick.get_axis(yx)
+            message.append(axis)
+            print(f'Name: {yx} Value: {axis} ')
+        #read buttons
+        buttons = joystick.get_numbuttons()
+        for i in range(buttons):
+            butt = joystick.get_button(i)
+            message.append(butt)
+            print(f'number: {i} return {butt}')
+        #
+        Lx = message[0]
+        Ly = message[1]*-1
+        Rx = message[3]
+        A = message[6]
+        B = message[7]
+        
+        output = SalasaTest.joystick(Ly, Lx, Rx, A,B)
+        print(output) 
+pygame.quit()
 
 
 
