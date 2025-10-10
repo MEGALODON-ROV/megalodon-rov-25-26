@@ -1,4 +1,5 @@
-
+// const int LED = 11;    // can use const int for pin numbers
+// const int BUTTON = 8;
 
 void setup() {
   // put your setup code here, to run once:
