@@ -18,12 +18,12 @@ Servo V_value;
 //attach thrusters to pins (PWM)
 void setup() {
   // put your setup code here, to run once:
-  
-FR_value.attach(11);
-FL_value.attach(10);
-BR_value.attach(9);
-BL_value.attach(6);
-V_value.attach(5);
+  Serial.begin(9600);
+  FR_value.attach(11);
+  FL_value.attach(10);
+  BR_value.attach(9);
+  BL_value.attach(6);
+  V_value.attach(5);
 }
 
 void loop() {
