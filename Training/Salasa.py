@@ -1,10 +1,12 @@
 import pygame
 import SalasaTest
+import serial
 from time import sleep
 
 pygame.init()
 pygame.joystick.init()
 
+arduino = serial.Serial("COM3", 9600)
 loop = True
 while loop:
     for event in pygame.event.get():
@@ -42,12 +44,18 @@ while loop:
         B = message[7]
         
         output = SalasaTest.joystick(Lx, Ly, Rx, A, B)
+        
+        output = output.encode("ascii")
+
+        arduino.write(output) 
+
+        received = arduino.readline().decode("ascii")
+        print(received)
+
         print(output) 
         sleep(0.5)
 pygame.quit()
-
-
-
+arduino.close()
 
        
 
