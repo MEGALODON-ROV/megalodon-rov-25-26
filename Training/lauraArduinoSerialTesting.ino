@@ -1,6 +1,6 @@
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);     // 2 speeds to send info (bod rate): 115,200 and 9600
+  Serial.begin(115200);     // 2 speeds to send info (baud rate): 115,200 and 9600
 }
 
 
