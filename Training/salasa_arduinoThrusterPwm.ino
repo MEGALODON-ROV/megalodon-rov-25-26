@@ -8,7 +8,7 @@ int br;
 int bl;
 int vertical1;
 
-//servo objects
+//create servo objects
 Servo fl;
 Servo fr;
 Servo br;
@@ -35,13 +35,13 @@ if (Serial.available()) {
   int br_value = Serial.readStringUntil(':').toInt();
   int bl_value = Serial.readStringUntil('#').toInt();
   int vertical1_value = Serial.readStringUntil('*').toInt();
-
+//print values
   Serial.println("FL_PWM: " + String(fl_value));
   Serial.println("FR_PWM: " + String(fr_value));
   Serial.println("BR_PWM: " + String(br_value));
   Serial.println("BL_PWM: " + String(bl_value));
   Serial.println("VERTICAL1_PWM: " + String(vertical1_value));
-
+//send values to thrusters
   fl.writeMicroseconds(fl_value);
   fr.writeMicroseconds(fr_value);
   br.writeMicroseconds(bl_value);
