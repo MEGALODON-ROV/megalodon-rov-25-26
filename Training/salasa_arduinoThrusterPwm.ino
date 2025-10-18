@@ -2,51 +2,51 @@
 #include <Servo.h>
 
 //declare thruster values
-int FR_value;
-int FL_value;
-int BR_value;
-int BL_value;
-int V_value;
+int fl;
+int fr;
+int br;
+int bl;
+int vertical1;
 
 //servo objects
-Servo FR_value;
-Servo FL_value;
-Servo BR_value;
-Servo BL_value;
-Servo V_value;
+Servo fl;
+Servo fr;
+Servo br;
+Servo bl;
+Servo vertical1;
 
 //attach thrusters to pins (PWM)
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  FR_value.attach(11);
-  FL_value.attach(10);
-  BR_value.attach(9);
-  BL_value.attach(6);
-  V_value.attach(5);
+  fl.attach(11);
+  fr.attach(10);
+  br.attach(9);
+  bl.attach(6);
+  vertical1.attach(5);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   // read values from Serial
 if (Serial.available()) {
-  int fl = Serial.readStringUntil(',').toInt();
-  int fr = Serial.readStringUntil('/').toInt();
-  int bl = Serial.readStringUntil(':').toInt();
-  int br = Serial.readStringUntil('#').toInt();
-  int vertical1 = Serial.readStringUntil('*').toInt();
+  int fl_value = Serial.readStringUntil(',').toInt();
+  int fr_value = Serial.readStringUntil('/').toInt();
+  int br_value = Serial.readStringUntil(':').toInt();
+  int bl_value = Serial.readStringUntil('#').toInt();
+  int vertical1_value = Serial.readStringUntil('*').toInt();
 
-  Serial.println(fl);
-  Serial.println(fr);
-  Serial.println(bl);
-  Serial.println(br);
-  Serial.println(vertical1);
+  Serial.println("FL_PWM: " + String(fl_value));
+  Serial.println("FR_PWM: " + String(fr_value));
+  Serial.println("BR_PWM: " + String(br_value));
+  Serial.println("BL_PWM: " + String(bl_value));
+  Serial.println("VERTICAL1_PWM: " + String(vertical1_value));
 
-  FR_value.WriteMicroseconds(fl);
-  FL_value.WriteMicroseconds(fr);
-  BR_value.WriteMicroseconds(bl);
-  BL_value.WriteMicroseconds(br);
-  V_value.WriteMicroseconds(vertical1);
+  fl.writeMicroseconds(fl_value);
+  fr.writeMicroseconds(fr_value);
+  br.writeMicroseconds(bl_value);
+  bl.writeMicroseconds(br_value);
+  vertical1.writeMicroseconds(vertical1_value);
 
 
 
