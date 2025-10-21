@@ -1,11 +1,12 @@
 import pygame
 from time import sleep
+import serial
 
 pygame.init()
 pygame.joystick.init()
 
-joystick = pygame.joystick.Joystick(0)
-joystick.init()
+#joystick = pygame.joystick.Joystick(0)
+#joystick.init()
 
 loop = True
 
@@ -63,6 +64,7 @@ def thrusterMap(Lx: int, Ly: int, Rx: int, A: int, B: int, xPercent: int, yPerce
         brV = 1500
 
     output = str(fl) + "+" + str(fr) + "-" + str(bl) + "*" + str(br) + "/" + str(flV) + "(" + str(frV) + ")" + str(blV) + "[" + str(brV)
+    
     #fl, fr, bl, br, flV, frV, blV, brV
     
     return output
@@ -75,13 +77,17 @@ while loop and timer < 200:
         if event.type == pygame.QUIT:
             loop = False
 
-    joystickX = joystick.get_axis(2)
-    joystickY = -joystick.get_axis(3)
-    joystickR = -joystick.get_axis(0)
-    joystickA = clamp(-joystick.get_axis(1), 0, 1)
-    joystickB = clamp(joystick.get_axis(1), 0, 1)
+    joystickX = 0.5#joystick.get_axis(2)
+    joystickY = 1#-joystick.get_axis(3)
+    joystickR = 0#-joystick.get_axis(0)
+    joystickA = 0#clamp(-joystick.get_axis(1), 0, 1)
+    joystickB = 0#clamp(joystick.get_axis(1), 0, 1)
     print(thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1))
     timer += 1
+    message = thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1).encode("ascii")
+    arduino.write(message)
+
+    print(arduino)
     sleep(0.1)
 
 print("end")
