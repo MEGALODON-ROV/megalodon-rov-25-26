@@ -1,15 +1,17 @@
 import pygame
+import serial
 from time import sleep
 from kaden_testing import thruster_output
-#import math function
-#import pygame: imports the Pygame library for joystick input
-#from time import sleep: allows delay in execution
-#example: eating food you don't constantly eat food but one at a time
+# import math function
+# import pygame: imports the Pygame library for joystick input
+# from time import sleep: allows delay in execution
+# example: eating food you don't constantly eat food but one at a time
 
+arduino = serial.Serial('port', 9600)
 pygame.init()
-#starts all Pygame modules
+# starts all Pygame modules
 pygame.joystick.init()
-#sets up the joystick subsystem
+# sets up the joystick subsystem
 if pygame.joystick.get_count() == 0:
     print("No joystick detected.")
 else:
@@ -39,6 +41,10 @@ else:
       print(output)
 
         # Add a small delay to reduce CPU usage
+      output = output.encode("ASCII")
+      arduino.write(output)
+      recieved = arduino.readline().decode('ASCII')
+      print("Arduino says:", recieved)
       sleep(0.1)
 
 pygame.quit()
