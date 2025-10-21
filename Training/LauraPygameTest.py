@@ -1,9 +1,13 @@
 import lauraTest
 import pygame
+import serial
 from time import sleep
 
 pygame.init()       # Initialize Pygame modules
 pygame.joystick.init()  # Initialize joystick module, sets up joystick subsystem
+
+# connect to arduino
+arduino = serial.Serial("COM3", 9600)  # open serial connection to arduino
 
 # main loop
 loop = True
@@ -52,10 +56,15 @@ while loop:
     print("B: {}".format(B))
 
     # convert to arduino format to prepare to send
-    messageToSend = lauraTest.convertForArduino(Ly, 1, Lx, 1, Rx, A, B)
+    messageToSend = lauraTest.convertForArduino(Ly, 1, Lx, 0.5, Rx, A, B)
     messageToSend = messageToSend.encode("ascii")
     print("message to send: {}".format(messageToSend))
+    arduino.write(messageToSend)  # send to arduino
+
+    received = arduino.readline().decode("ascii")  # read a line from arduino
+    print("Received from Arduino: {}".format(received))
 
     sleep(0.5)  # add delay to avoid spamming output
 
 pygame.quit()  # stops pygame cleanly
+arduino.close()  # close serial connection to arduino

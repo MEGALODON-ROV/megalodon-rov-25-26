@@ -20,12 +20,10 @@ vertical_thrusters = [1500, 1500, 1500, 1500]
 # thruster[2] = back right
 # thruster[3] = back left
 def joystick(Ly, Lx, Rx, A,B):
-    Ly = joystick_value(Ly)
-    Lx = joystick_value(Lx)
-    Rx = joystick_value(Rx)
+    
     #scaling percentage
-    percent_horiz = 0.9
-    percent_vert = 0.5
+    percent_horiz = 1
+    percent_vert = 1
 
     Ly = joystick_value(Ly) * percent_horiz
     Lx = joystick_value(Lx) * percent_horiz
@@ -76,7 +74,4 @@ def joystick(Ly, Lx, Rx, A,B):
     vertical3 = limit_wpm(vertical3)
     vertical4 = limit_wpm(vertical4)
 
-    return fl, fr, bl, br, vertical1, vertical2, vertical3, vertical4
-
-def arduino_prep():
- str(vertical_thrusters[0]) + "," + str(vertical_thrusters[1]) + "/" + str(vertical_thrusters[2]) + ":" + str(vertical_thrusters[3]) + "#" + str(horizontal_thrusters[0]) + "*" + str(horizontal_thrusters[1]) + "!" + str(horizontal_thrusters[2]) + "-" + str(horizontal_thrusters[3])
+    return str(fl) + "," + str(fr) + "/" + str(bl) + ":" + str(br) + "#" + str(vertical1) + "*" + str(vertical2) + "!" + str(vertical3) + "-" + str(vertical4) + "/"
