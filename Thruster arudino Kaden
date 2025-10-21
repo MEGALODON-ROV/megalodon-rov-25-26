@@ -1,4 +1,15 @@
 #include <Servo.h>
+//integer values
+int frontleft;
+int frontright;
+int backleft;
+int backright;
+int verticalfrontleft;
+int verticalfrontright;
+int verticalbackleft;
+int verticalbackright;
+//function/abilities
+
 Servo fl;
 Servo fr;
 Servo bl;
@@ -9,33 +20,37 @@ Servo verbl;
 Servo verbr;
 
 void setup() {
-  fl.attach(11);
-  fr.attach(10);
-  bl.attach(9);
-  br.attach(6);
-  verfl.attach(5);
+  serial.begin(9600);
+  fl.attach(4);
+  fr.attach(6);
+  bl.attach(10);
+  br.attach(8);
+  verfl.attach(7);
   verfr.attach(3);
+  verbl.attach(5);
+  verbr.attach(9);
+  delay(2000);
 }
 
 void loop() {
   if (Serial.available()){
-   int frontl = Serial.readStringUntil('-').toInt();
-   Serial.printIn("FL" + String(frontl)); 
-   fl.writeMicroseconds(frontl);  
-   int frontr = Serial.readStringuntil('=').toInt();
-   Serial.printIn(frontr);
-   fl.writeMicroseconds("FR"+String(frontr)); 
-   int backl = Serial.readStringuntil('+').toInt();
-   Serial.printIn(backl);
-   fl.writeMicroseconds("BL" + String(backl)); 
-   int backr = Serial.readStringuntil(',').toInt();
-   Serial.printIn(backr);
-   fl.writeMicroseconds("BR" + String(backr)); 
-   int verticalfl = Serial.readStringuntil(']').toInt();
-   Serial.printIn(verticalfl);
-   fl.writeMicroseconds("VFL" + String(verticalfl)); 
-   int verfr = Serial.readStringuntil('/').toInt();
-   Serial.printIn(verfr);
-   fl.writeMicroseconds("VFR" + String(verfr)); 
+   frontleft= Serial.readStringUntil('-').toInt();
+   Serial.println("FL" + String(frontleft)); 
+   fl.writeMicroseconds(frontleft);  
+   frontright= Serial.readStringuntil('=').toInt();
+   Serial.println(frontright);
+   fl.writeMicroseconds("FR"+String(frontright)); 
+   backleft = Serial.readStringuntil('+').toInt();
+   Serial.println(backleft);
+   fl.writeMicroseconds("BL" + String(backleft)); 
+   backright = Serial.readStringuntil(',').toInt();
+   Serial.println(backright);
+   fl.writeMicroseconds("BR" + String(backright)); 
+   verticalfrontleft = Serial.readStringuntil(']').toInt();
+   Serial.println(verticalfrontleft);
+   fl.writeMicroseconds("VFL" + String(verticalfrontleft)); 
+   verticalfrontright = Serial.readStringuntil('/').toInt();
+   Serial.println(verticalfrontright);
+   fl.writeMicroseconds("VFR" + String(verfrontright)); 
   }
 }
