@@ -1,0 +1,45 @@
+# import the cv2 library
+import cv2
+import numpy as np
+import os
+
+# Open the default camera
+camera = cv2.VideoCapture(0)
+
+#get the width and height of the frame
+frame_width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+frame_height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+# Define the codec and create VideoWriter object
+fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+output = cv2.VideoWriter('output.mp4', fourcc, 20.0, (frame_width, frame_height))
+
+# Folder where images will be saved
+base_dir = r"C:\Users\xiaoy\megalodon-rov-25-26\Images_PY_CV"
+os.makedirs(base_dir, exist_ok=True)
+
+while True:
+   ret, frame = camera.read()
+   #write the frame to the output file
+   output.write(frame)
+   
+   #display the captured frame
+   cv2.imshow('Camera', frame)
+ 
+   count = 0
+   key = cv2.waitKey(1) 
+   if key == ord('s'):
+    if count>1:
+      string = 'captured_image'+str(count)+'.png'
+      filename = string
+    filename = 'captured_image.png'
+    cv2.imwrite(filename, frame)
+    print(f"Image saved as {filename}")
+  # press q to quit
+   if cv2.waitKey(1) == ord('q'):
+       break
+
+# Release the camera and close all OpenCV windows
+camera.release()
+output.release()
+cv2.destroyAllWindows()
