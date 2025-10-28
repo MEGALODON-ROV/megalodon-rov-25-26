@@ -1,8 +1,8 @@
-from email.mime import image
 import cv2
 import os
 import numpy as np
 import imutils
+import matplotlib.pyplot as plt
 
 base_path = os.path.dirname(__file__)
 
@@ -135,3 +135,44 @@ grid_concat_image = concat_2D_resize([[image1, image2], [image1, image2, image1]
 cv2.imshow("Grid Concatenation", grid_concat_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+# DRAWING ON IMAGES SECTION
+# to draw a line: cv2.line(image, startPoint (tuple), endPoint (tuple), color(BGR), thickness)
+# to draw a rectangle need top-left and bottom-right points
+# for circle need center point and radius
+# for a polygon, make an array of points, reshape it to a (-1, 1, 2) and use cv2.polylines()
+    # np will calculate -1 based on array size
+    # 1 is num of polygons
+    # 2 is coordinates per point (x, y)
+#draw a rectangle around Trump's head and label it
+imageToDrawOn = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
+copiedImage = imageToDrawOn.copy()
+cv2.rectangle(imageToDrawOn, (250, 0), (400, 300), (0, 255, 0), 5)   # green rectangle w/ thickness 5px
+font = cv2.FONT_HERSHEY_SCRIPT_SIMPLEX
+cv2.putText(imageToDrawOn, "Trump's Head", (0, 310), font, 3, (0, 0, 0), 2, cv2.LINE_AA)
+cv2.imshow("Labeled Trump", imageToDrawOn)
+# experiment with using polylines
+points = np.array([[250,0], [400,0], [400,300], [250,300]])
+points = points.reshape(-1, 1, 2)
+cv2.polylines(copiedImage, [points], isClosed = True, color = (0, 255, 0), thickness = 5)
+cv2.imshow("Polylines Trump", copiedImage)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# CONTOURS SECTION
+trump = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
+trump = trump[0:800, 0:460]
+gray = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_GRAYSCALE)
+gray = gray[0:800, 0:460]
+_, binary = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)   # thresholding to get < 100 turn off, > 100 turn on
+plt.imshow(binary, cmap = "gray")
+
+# hierarchy: tells when there are contours inside contours
+# RETR_EXTERNAL: only get outer contours (not only largest)
+# RETR_TREE: get all contours and create a full hierarchy
+# CHAIN_APPROX_SIMPLE: how to get the contours
+contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+trump = cv2.cvtColor(trump, cv2.COLOR_BGR2RGB)   # convert BGR to RGB for matplotlib
+draw = cv2.drawContours(trump, contours, -1, (255, 150, 50), 5)   # -1 means draw all contours
+plt.imshow(draw)
+plt.show()
