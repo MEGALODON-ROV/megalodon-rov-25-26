@@ -14,10 +14,6 @@ upper_rgb = np.array([180, 120, 90]) # upper bound of crab color (in RGB)
 egc = cv2.imread(r"C:\Users\dogei\Downloads\egc.jpg")
 rc = cv2.imread(r"C:\Users\dogei\Downloads\rc.png")
 
-# Convert from BGR (OpenCV default) to RGB
-egc_rgb = cv2.cvtColor(egc, cv2.COLOR_BGR2RGB)
-rc_rgb = cv2.cvtColor(rc, cv2.COLOR_BGR2RGB)
-
 # --- CREATE MASK ---
 # Identify pixels within the color range
 """
@@ -50,4 +46,5 @@ if np.any(rc_mask > 0):
     print("✅ Target crab color detected!")
 else:
     print("❌ Target crab color NOT found.")
+
 """
