@@ -1,6 +1,8 @@
 import cv2
 import os
 import numpy as np
+import imutils
+import matplotlib.pyplot as plt
 
 base_path = os.path.dirname(__file__)
 
@@ -59,5 +61,125 @@ cv2.imshow("Original Image", imageToCrop)
 print(imageToCrop.shape)        # prints (rows, columns, color channels)
 croppedImage = imageToCrop[0:300, 250:400]      # trump's head!!!
 cv2.imshow("Cropped Image", croppedImage)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# RESIZING IMAGE SECTION
+# resize image width to 150 pixels, keep aspect ratio
+ratio = 150 / imageToCrop.shape[1]      # newWidth / oldWidth
+dimension = (150, int(ratio * imageToCrop.shape[0]))    # width, height aka y, x
+resizedImage = cv2.resize(imageToCrop, dimension, interpolation=cv2.INTER_AREA)
+cv2.imshow("Width Resized Image", resizedImage)
+
+# resize image to height of 50 pixels
+ratio = 50 / imageToCrop.shape[0]      # newHeight / oldHeight
+dimension = (int(ratio * imageToCrop.shape[1]), 50)
+resizedImage2 = cv2.resize(imageToCrop, dimension, interpolation=cv2.INTER_AREA)
+cv2.imshow("Height Resized Image", resizedImage2)
+
+# use imutils to resize image
+resizedImage3 = imutils.resize(imageToCrop, width = 150)
+cv2.imshow("Imutils Width Resized Image", resizedImage3)
+resizedImage4 = imutils.resize(imageToCrop, height = 50)
+cv2.imshow("Imutils Height Resized Image", resizedImage4)
+
+# half of width and height
+resizedImage5 = imutils.resize(imageToCrop, width = int(imageToCrop.shape[1] / 2))
+cv2.imshow("Half Resized Image", resizedImage5)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# notes on interpolation methods:
+# cv2.INTER_NEAREST: fast, takes neightbor pixel value and assumes intensity (bad quality)
+# cv2.INTER_LINEAR: default, calculates pixels with y=mx+b (highest quality for speed)
+# cv2.INTER_AREA: good for shrinking images, may be slower
+# cv2.INTER_CUBIC: better but slower (complicated lol, can upsample too)
+# cv2.INTER_LANCZOS4: best but slowest (not often used)
+
+# CONCATENATING IMAGES SECTION
+# concatenate images of different widths
+def vconcat_resize(img_list, interpolation = cv2.INTER_LINEAR):
+    # get the smaller width
+    w_min = min(image.shape[1] for image in img_list)
+
+    # resize images to the smaller width and store them in a new list
+    im_list_resize = [imutils.resize(image, width = w_min, inter = interpolation) for image in img_list]
+
+    return cv2.vconcat(im_list_resize)
+
+def hconcat_resize(img_list, interpolation = cv2.INTER_LINEAR):
+    # get the smaller height
+    h_min = min(image.shape[0] for image in img_list)
+
+    # resize images to the smaller height and store them in a new list
+    im_list_resize = [imutils.resize(image, height = h_min, inter = interpolation) for image in img_list]
+
+    return cv2.hconcat(im_list_resize)
+
+def concat_2D_resize(img_list_2D, interpolation = cv2.INTER_LINEAR):
+    # resize to have same height so that we can concatenate each hori line of 2D list
+    # and then concatenate each hori line so that it is ready to be concatenated vertically
+    im_list_2D_resize = [hconcat_resize(im_list, interpolation = interpolation) for im_list in img_list_2D]
+
+    return vconcat_resize(im_list_2D_resize, interpolation = interpolation)
+
+# try calling the function!
+image1 = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
+image2 = cv2.imread(os.path.join(base_path, "bidenFunny.jpg"), cv2.IMREAD_COLOR)
+
+vert_concat_image = vconcat_resize([image1, image2])
+cv2.imshow("Vertical Concatenation", vert_concat_image)
+horiz_concat_image = hconcat_resize([image1, image2])
+cv2.imshow("Horizontal Concatenation", horiz_concat_image)
+grid_concat_image = concat_2D_resize([[image1, image2], [image1, image2, image1], [image2]])
+cv2.imshow("Grid Concatenation", grid_concat_image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# DRAWING ON IMAGES SECTION
+# to draw a line: cv2.line(image, startPoint (tuple), endPoint (tuple), color(BGR), thickness)
+# to draw a rectangle need top-left and bottom-right points
+# for circle need center point and radius
+# for a polygon, make an array of points, reshape it to a (-1, 1, 2) and use cv2.polylines()
+    # np will calculate -1 based on array size
+    # 1 is num of polygons
+    # 2 is coordinates per point (x, y)
+#draw a rectangle around Trump's head and label it
+imageToDrawOn = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
+copiedImage = imageToDrawOn.copy()
+cv2.rectangle(imageToDrawOn, (250, 0), (400, 300), (0, 255, 0), 5)   # green rectangle w/ thickness 5px
+font = cv2.FONT_HERSHEY_SCRIPT_SIMPLEX
+cv2.putText(imageToDrawOn, "Trump's Head", (0, 310), font, 3, (0, 0, 0), 2, cv2.LINE_AA)
+cv2.imshow("Labeled Trump", imageToDrawOn)
+# experiment with using polylines
+points = np.array([[250,0], [400,0], [400,300], [250,300]])
+points = points.reshape(-1, 1, 2)
+cv2.polylines(copiedImage, [points], isClosed = True, color = (0, 255, 0), thickness = 5)
+cv2.imshow("Polylines Trump", copiedImage)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# CONTOURS SECTION
+trump = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
+trump = trump[0:800, 0:460]
+gray = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_GRAYSCALE)
+gray = gray[0:800, 0:460]
+_, binary = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)   # thresholding to get < 100 turn off, > 100 turn on
+cv2.imshow("Binary Image", binary)
+
+# hierarchy: tells when there are contours inside contours
+# RETR_EXTERNAL: only get outer contours (not only largest)
+# RETR_TREE: get all contours and create a full hierarchy
+# CHAIN_APPROX_SIMPLE: how to get the contours
+contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+draw = cv2.drawContours(trump, contours, -1, (50, 150, 255), 5)   # -1 means draw all contours
+cv2.imshow("Contours", draw)
+
+largestContour = max(contours, key = cv2.contourArea)   # get the largest contour by area
+approxConts = trump.copy()
+length = cv2.arcLength(largestContour, True)   # True means contour is closed
+approx = cv2.approxPolyDP(largestContour, 0.005 * length, True)
+cv2.drawContours(approxConts, [approx], -1, (0, 255, 0), 5)
+cv2.imshow("Approximated Contours", approxConts)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
