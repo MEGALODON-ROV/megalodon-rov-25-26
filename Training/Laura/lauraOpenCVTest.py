@@ -165,14 +165,21 @@ trump = trump[0:800, 0:460]
 gray = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_GRAYSCALE)
 gray = gray[0:800, 0:460]
 _, binary = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)   # thresholding to get < 100 turn off, > 100 turn on
-plt.imshow(binary, cmap = "gray")
+cv2.imshow("Binary Image", binary)
 
 # hierarchy: tells when there are contours inside contours
 # RETR_EXTERNAL: only get outer contours (not only largest)
 # RETR_TREE: get all contours and create a full hierarchy
 # CHAIN_APPROX_SIMPLE: how to get the contours
 contours, hierarchy = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-trump = cv2.cvtColor(trump, cv2.COLOR_BGR2RGB)   # convert BGR to RGB for matplotlib
-draw = cv2.drawContours(trump, contours, -1, (255, 150, 50), 5)   # -1 means draw all contours
-plt.imshow(draw)
-plt.show()
+draw = cv2.drawContours(trump, contours, -1, (50, 150, 255), 5)   # -1 means draw all contours
+cv2.imshow("Contours", draw)
+
+largestContour = max(contours, key = cv2.contourArea)   # get the largest contour by area
+approxConts = trump.copy()
+length = cv2.arcLength(largestContour, True)   # True means contour is closed
+approx = cv2.approxPolyDP(largestContour, 0.005 * length, True)
+cv2.drawContours(approxConts, [approx], -1, (0, 255, 0), 5)
+cv2.imshow("Approximated Contours", approxConts)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
