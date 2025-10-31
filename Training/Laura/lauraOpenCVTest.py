@@ -15,6 +15,7 @@ base_path = os.path.dirname(__file__)
 # cv2.destroyAllWindows()
 # cv2.imwrite(os.path.join(os.path.dirname(__file__), "trumpCopy.jpg"), trump)
 
+
 # # CAMERA SECTION
 # camera = cv2.VideoCapture(0)    # 0 is usually the built-in webcam
 
@@ -53,6 +54,7 @@ base_path = os.path.dirname(__file__)
 # outputFile.release()
 # cv2.destroyAllWindows()
 
+
 # CROPPING IMAGE SECTION
 # croppedImage = image[startY:endY, startX:endX]
 
@@ -63,6 +65,7 @@ croppedImage = imageToCrop[0:300, 250:400]      # trump's head!!!
 cv2.imshow("Cropped Image", croppedImage)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
 
 # RESIZING IMAGE SECTION
 # resize image width to 150 pixels, keep aspect ratio
@@ -95,6 +98,7 @@ cv2.destroyAllWindows()
 # cv2.INTER_AREA: good for shrinking images, may be slower
 # cv2.INTER_CUBIC: better but slower (complicated lol, can upsample too)
 # cv2.INTER_LANCZOS4: best but slowest (not often used)
+
 
 # CONCATENATING IMAGES SECTION
 # concatenate images of different widths
@@ -136,6 +140,7 @@ cv2.imshow("Grid Concatenation", grid_concat_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
+
 # DRAWING ON IMAGES SECTION
 # to draw a line: cv2.line(image, startPoint (tuple), endPoint (tuple), color(BGR), thickness)
 # to draw a rectangle need top-left and bottom-right points
@@ -159,6 +164,7 @@ cv2.imshow("Polylines Trump", copiedImage)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
+
 # CONTOURS SECTION
 trump = cv2.imread(os.path.join(base_path, "trumpFunny.jpg"), cv2.IMREAD_COLOR)
 trump = trump[0:800, 0:460]
@@ -181,5 +187,77 @@ length = cv2.arcLength(largestContour, True)   # True means contour is closed
 approx = cv2.approxPolyDP(largestContour, 0.005 * length, True)
 cv2.drawContours(approxConts, [approx], -1, (0, 255, 0), 5)
 cv2.imshow("Approximated Contours", approxConts)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+# SHAPE DETECTION SECTION
+# basics of shape detection:
+    # blur the grayscaled and thresholded image to reduce noise
+    # do contour approximation (find largest contour, approxPolyDP)
+    # use length of the returned list of edges of shape to determine # edges
+    # use # edges to find shape type
+
+class ShapeDetector:
+    def __init__(self):
+        pass
+
+    def detect(self, contour):
+        peri = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.04 * peri, True)
+
+        if len(approx) == 3:
+            return "triangle"
+        elif len(approx) == 4:
+            (x, y, w, h) = cv2.boundingRect(approx)
+            ratio = w / float(h)
+            if ratio >= 0.95 and ratio <= 1.05:
+                return "square"
+            else:
+                return "rectangle"
+        elif len(approx) == 5:
+            return "pentagon"
+        else:
+            return "circle"     # assume as circle if more than 5 edges
+
+# get image and resize for easier processing
+shapes = cv2.imread(os.path.join(base_path, "geometricShapes.jpg"), cv2.IMREAD_COLOR)
+#resized = cv2.resize(shapes, (300, 300))
+#ratio = shapes.shape[0] / float(resized.shape[0])
+
+# blur to get rid of noise
+gray = cv2.cvtColor(shapes, cv2.COLOR_BGR2GRAY)
+blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+_, thresh = cv2.threshold(blurred, 100, 255, cv2.THRESH_BINARY)
+
+# find contours
+contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+# find shapes
+shapeDetector = ShapeDetector()
+for contour in contours: # go through the contour of each shape found
+    #find center of contour for labeling
+    moment = cv2.moments(contour)
+    if moment["m00"] == 0:      # avoid division by 0
+        continue
+    cX = int((moment["m10"] / moment["m00"]) * ratio)
+    cY = int((moment["m01"] / moment["m00"]) * ratio)
+
+    # find the shape
+    shape = shapeDetector.detect(contour)
+
+    # convert contour from object into usable type
+    #contour = contour.astype("float")
+    #contour *= ratio
+    contour = contour.astype("int")
+
+    # draw on the shapes and labels
+    cv2.drawContours(shapes, [contour], -1, (0, 255, 0), 2)
+    cv2.putText(shapes, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
+                0.5, (255, 0, 0), 2)
+    
+
+# show the output image
+cv2.imshow("Detected Shapes", shapes)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
