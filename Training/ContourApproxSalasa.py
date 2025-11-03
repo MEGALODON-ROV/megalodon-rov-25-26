@@ -4,7 +4,7 @@ import imutils
 import cv2
 
 base_path = os.path.dirname(__file__)
-image_path = r"C:\Users\Yusuke\megalodon-rov-25-26\Training\output.webp"  # Use direct path
+image_path = r"C:\Users\Student\Documents\megalodon-rov-25-26\Training\output.webp"  # Use direct path
 print(f"Loading image from: {image_path}")
 # load the image and display it
 image = cv2.imread(image_path)
