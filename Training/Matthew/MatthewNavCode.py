@@ -85,9 +85,9 @@ while loop and timer < 200:
     print(thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1))
     timer += 1
     message = thrusterMap(joystickX, joystickY, joystickR, joystickA, joystickB, 1, 1).encode("ascii")
-    arduino.write(message)
+    #arduino.write(message)
 
-    print(arduino)
+    #print(arduino)
     sleep(0.1)
 
 print("end")
