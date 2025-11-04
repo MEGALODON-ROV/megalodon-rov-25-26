@@ -220,10 +220,8 @@ class ShapeDetector:
         else:
             return "circle"     # assume as circle if more than 5 edges
 
-# get image and resize for easier processing
+# get image
 shapes = cv2.imread(os.path.join(base_path, "geometricShapes.jpg"), cv2.IMREAD_COLOR)
-#resized = cv2.resize(shapes, (300, 300))
-#ratio = shapes.shape[0] / float(resized.shape[0])
 
 # blur to get rid of noise
 gray = cv2.cvtColor(shapes, cv2.COLOR_BGR2GRAY)
@@ -240,24 +238,85 @@ for contour in contours: # go through the contour of each shape found
     moment = cv2.moments(contour)
     if moment["m00"] == 0:      # avoid division by 0
         continue
-    cX = int((moment["m10"] / moment["m00"]) * ratio)
-    cY = int((moment["m01"] / moment["m00"]) * ratio)
+    cX = int((moment["m10"] / moment["m00"]))
+    cY = int((moment["m01"] / moment["m00"]))
 
     # find the shape
     shape = shapeDetector.detect(contour)
 
-    # convert contour from object into usable type
-    #contour = contour.astype("float")
-    #contour *= ratio
-    contour = contour.astype("int")
-
     # draw on the shapes and labels
     cv2.drawContours(shapes, [contour], -1, (0, 255, 0), 2)
     cv2.putText(shapes, shape, (cX, cY), cv2.FONT_HERSHEY_SIMPLEX,
-                0.5, (255, 0, 0), 2)
+                1, (255, 0, 0), 1)
     
 
 # show the output image
 cv2.imshow("Detected Shapes", shapes)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+# ENDPOINT DETECTION SECTION
+# get image
+shapes = cv2.imread(os.path.join(base_path, "geometricShapes.jpg"), cv2.IMREAD_COLOR)
+
+# turn gray
+gray = cv2.cvtColor(shapes, cv2.COLOR_BGR2GRAY)
+
+# use Canny edge detector to find edges
+edges = cv2.Canny(gray, 40, 150, apertureSize = 3)
+
+# Apply HoughLinesP method to 
+# to directly obtain line end points
+lines_list =[]
+lines = cv2.HoughLinesP(
+            edges, # Input edge image
+            1, # Distance resolution in pixels
+            np.pi/180, # Angle resolution in radians
+            threshold=90, # Min number of votes for valid line
+            minLineLength=10, # Min allowed length of line
+            maxLineGap=10 # Max allowed gap between line for joining them
+            )
+
+# iterate over the endpoints of lines
+for points in lines:
+    x1, y1, x2, y2 = points[0]
+    # draw the lines on the original image
+    cv2.line(shapes, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    # append the points to the list
+    lines_list.append([(x1, y1), (x2, y2)])
+    print(f"Line from ({x1}, {y1}) to ({x2}, {y2})")
+
+# show the output image
+cv2.imshow("Detected Lines", shapes)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+# MOUSE CLICK EVENTS SECTION
+points = []
+
+def click_event(event, x, y, flags, params):        # flags and params given by OpenCV
+    global points
+
+    if event == cv2.EVENT_LBUTTONDOWN:     # left mouse button clicked
+        points.append((x, y))
+        cv2.circle(biden, points[-1], 5, (0, 0, 255), -1)   # draw most recent point
+
+
+biden = cv2.imread(os.path.join(base_path, "bidenFunny.jpg"), cv2.IMREAD_COLOR)
+cv2.imshow("Biden hohoho", biden)
+cv2.setMouseCallback("Biden hohoho", click_event)
+
+while True:
+    cv2.imshow("Biden hohoho", biden)
+    key = cv2.waitKey(1)
+
+    if len(points) == 4:
+        break
+
+cv2.rectangle(biden, points[0], points[2], (0, 255, 0), 2)   # draw rectangle using top-left and bottom-right points
+cv2.imshow("Biden hohoho", biden)
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
