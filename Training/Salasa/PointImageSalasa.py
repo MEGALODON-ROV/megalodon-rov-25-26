@@ -53,3 +53,54 @@ if len(refPt) == 2:
 	cv2.waitKey(0)
 # close all open windows
 cv2.destroyAllWindows()
+
+
+
+
+# #not drag to make box but click 4 times
+# import cv2
+# import os
+
+# image_path = r" " 
+# image = cv2.imread(image_path)
+
+# #copyyy
+# clone = image.copy()
+
+# #store clicked pts
+# points = []
+
+# #mouse function
+# def click_points(event, x, y, flags, param):
+# 	global points
+# 	if event == cv2.EVENT_LBUTTONDOWN:
+# 		#only record till 4 pts
+# 		if len(points) <4 :
+# 			points.append((x,y))
+# 			#circle if u want where u clicked.
+# // #cv2.circle(image, (x, y), 5, (0, 255, 0), -1)
+# //             cv2.imshow("image", image)
+# //             print(f"Point {len(points)}: {x}, {y}")
+# 		#stop afte 4 pts
+# 		if len(points) == 4:
+# 		print("4 pts sleleced:", points)
+# 		cv2.waitKey(500)
+# 	cv2.destroyAllWindows()
+
+# while True:
+# 	# display the image and wait for a keypress
+# 	cv2.imshow("image", image)
+# 	key = cv2.waitKey(1) & 0xFF
+# 	# if the 'r' key is pressed, reset the cropping region
+# 	if key == ord("r"):
+# 		image = clone.copy()
+# 		points = []
+
+# 	# if the 'c' key is pressed, break from the loop
+# 	elif key == ord("c"):
+# 		break
+# cv2.destroyAllWindows()
+
+
+
+
