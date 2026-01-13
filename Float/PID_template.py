@@ -10,7 +10,6 @@ def PID(target_position):
     integral = 0
     previous_error = 0
     derivative = 0
-    previous_output = 0  # Track previous motor output
     ERROR_ALLOWED = 20 # cm
     TIME_TO_HOLD = 40 # seconds
     time_started = 0 # REPLACE with current time function
@@ -29,8 +28,6 @@ def PID(target_position):
             output = 1900  # Maximum throttle value
         
         # USE THE OUTPUT VALUE
-
-        previous_output = output  # Store last output value
         
         previous_error = error
         # Add delay to prevent the loop from running too fast
@@ -40,6 +37,5 @@ def PID(target_position):
         # throttle value that just keeps it in place
     while (0 - time_started < TIME_TO_HOLD):    # REPLACE 0 WITH CURRENT TIME FUNCTION
         # maintain position
-        pass
-        
         # USE THE OUTPUT VALUE
+        pass
