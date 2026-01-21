@@ -2,7 +2,7 @@ import cv2
 import serial
 from time import sleep
 
-cereal = serial.Serial('COM3', 9600, timeout=1)
+cereal = serial.Serial("COM12", 9600, timeout=1)
 
 x = 0
 y = 0
@@ -16,8 +16,16 @@ zscl = 0
 
 clock = 0
 
-while clock < 100:
+while clock < 10:
     print(cereal.readline().decode('utf-8').strip())
+    sleep(0.1)
+    clock += 1
+
+x = int(cereal.read_until(b'+').decode('utf-8').strip('+'))
+y = int(cereal.read_until(b';').decode('utf-8').strip(';'))
+z = int(cereal.read_until(b'-').decode('utf-8').strip('-'))
+
+print(x + ", " + y + ", " + z)
 
 """
 cv2.waitKey(0)
