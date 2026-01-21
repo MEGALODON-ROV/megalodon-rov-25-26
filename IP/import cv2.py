@@ -2,7 +2,7 @@ import cv2
 import serial
 from time import sleep
 
-cereal = serial.Serial("COM12", 9600, timeout=1)
+cereal = serial.Serial('COM3', 9600, timeout=1)
 
 x = 0
 y = 0
@@ -14,26 +14,10 @@ yscl = 0
 zerr = 0
 zscl = 0
 
-def Extract():
-
-    line = cereal.readline().decode('utf-8').strip()
-
-    try:
-        xy, z_str = line.split(';')
-        x_str, y_str = xy.split(',')
-
-        x = float(x_str)
-        y = float(y_str)
-        z = float(z_str)
-
-        print(x + ", " + y + ", " + z)
-    except ValueError:
-        pass
-
 clock = 0
 
-while clock < 10:
-    Extract()
+while clock < 100:
+    print(cereal.readline().decode('utf-8').strip())
     sleep(0.1)
     clock += 1
 
