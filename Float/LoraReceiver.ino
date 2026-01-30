@@ -24,7 +24,6 @@
 
 #include "Arduino.h"
 #include "WiFi.h"
-#include "images.h"
 #include "LoRaWan_APP.h"
 #include <Wire.h>  
 #include "HT_SSD1306Wire.h"
@@ -143,13 +142,6 @@ void lora_init(void)
 /********************************* lora  *********************************************/
 
 SSD1306Wire  factory_display(0x3c, 500000, SDA_OLED, SCL_OLED, GEOMETRY_128_64, RST_OLED); // addr , freq , i2c group , resolution , rst
-
-
-void logo(){
-	factory_display.clear();
-	factory_display.drawXbm(0,5,logo_width,logo_height,(const unsigned char *)logo_bits);
-	factory_display.display();
-}
 
 void WIFISetUp(void)
 {
@@ -284,7 +276,6 @@ void setup()
 	factory_display.init();
 	factory_display.clear();
 	factory_display.display();
-	logo();
 	delay(300);
 	factory_display.clear();
 
