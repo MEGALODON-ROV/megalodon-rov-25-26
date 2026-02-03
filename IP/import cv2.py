@@ -1,0 +1,59 @@
+import cv2
+import serial
+from time import sleep
+
+cereal = serial.Serial('COM3', 9600, timeout=1)
+
+x = 0
+y = 0
+z = 0
+xerr = 0
+xscl = 0
+yerr = 0
+yscl = 0
+zerr = 0
+zscl = 0
+
+clock = 0
+
+while clock < 100:
+    print(cereal.readline().decode('utf-8').strip())
+    sleep(0.1)
+    clock += 1
+
+"""
+cv2.waitKey(0)
+
+cereal
+temp = x
+
+cv2.waitKey(0)
+
+xerr = (temp + x) / 2
+xscl = 9.81 / ((temp - x) / 2)
+
+cv2.waitKey(0)
+
+temp = y
+
+cv2.waitKey(0)
+
+xerr = (temp + y) / 2
+xscl = 9.81 / ((temp - y) / 2)
+
+cv2.waitKey(0)
+
+temp = z
+
+cv2.waitKey(0)
+
+xerr = (temp + z) / 2
+xscl = 9.81 / ((temp - z) / 2)
+
+xCalib = (x - xerr) * xscl
+yCalib = (y - yerr) * yscl
+zCalib = (z - zerr) * zscl
+
+print(x + ", " + y + ", " + z)"""
+
+#positions: +X, -X, +Y, -Y, +Z, -Z

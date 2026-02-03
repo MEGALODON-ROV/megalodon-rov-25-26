@@ -10,7 +10,7 @@ frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 # Define the codec and create VideoWriter object. 
 # For the VideoWriter func, may have to switch path.
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-out = cv2.VideoWriter(f'C:\\Users\Student\Downloads\output.mp4', fourcc, 20.0, (frame_width, frame_height))
+out = cv2.VideoWriter(f'/Users/matthewhoffmeister/Desktop/output.mp4', fourcc, 20.0, (frame_width, frame_height))
 
 while True:
     ret, frame = cam.read()
