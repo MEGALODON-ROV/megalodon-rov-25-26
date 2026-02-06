@@ -1,11 +1,12 @@
 #include <vector>
 #include <ESP32Servo.h>
 #include <MS5837.h>
+#include <Wire.h>
 
 int elapsedTime = 0;
 
-const int SCLpin = 41;
-const int SDApin = 42;
+const int SCLpin = 21;
+const int SDApin = 22;
 MS5837 depthSensor;
 double depth; // in meters
 String depthString = "";
@@ -71,6 +72,7 @@ void transmitData(){
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin(SDApin, SCLpin);
   linearServo.attach(02);    // pin 02
   initDepthSensor();
 }
@@ -84,7 +86,7 @@ void loop() {
     elapsedTime = millis();
 
     // put your main code here, to run repeatedly:
-    if(abs(profileTable[currentIndex].targetDepth - depth > 0.05)) {
+    if (abs(profileTable[currentIndex].targetDepth - depth) > 0.05) {
       servoCurrent = 1500 + (profileTable[currentIndex].targetDepth - depth) * kP;
     }
 
