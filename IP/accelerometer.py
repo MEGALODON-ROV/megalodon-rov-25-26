@@ -1,8 +1,7 @@
-import cv2
 import serial
 from time import sleep
 
-cereal = serial.Serial("COM12", 9600, timeout=1)
+cereal = serial.Serial("/dev/cu.usbmodem1101", 115200, timeout=1)
 
 x = 0
 y = 0
@@ -18,73 +17,77 @@ zscl = 0
 def extract():
     cereal.reset_input_buffer()  # Clear old data that builds up in queue
     line = cereal.readline().decode('utf-8').strip()
-    print("Raw data: " + line)
 
-    try:
-        xy, z_str = line.split(';')
-        x_str, y_str = xy.split(',')
+    complete = line.__contains__(":done") and line.__contains__("start+")
 
-        global x, y, z
-        x = float(x_str)
-        y = float(y_str)
-        z = float(z_str)
+    if not complete:
+        print("bad data")
+        extract()
+    else:
 
-        print(x_str + ", " + y_str + ", " + z_str)
-    except ValueError:
-        pass
+        #print("Raw data: " + line)
 
-# clock = 0
-#
-# while clock < 100:
-#     extract()
-#     sleep(0.1)
-#     clock += 1
+        try:
+            data, done = line.split(":")
+            start, data2 = data.split("+")
+            xy, z_str = data2.split(';')
+            x_str, y_str = xy.split(',')
+
+            global x, y, z
+            x = float(x_str)
+            y = float(y_str)
+            z = float(z_str)
+
+            #print(x_str + ", " + y_str + ", " + z_str)
+        except ValueError:
+            pass
+
+def average(axis):
+    clock = 0
+    holding = 0
+    while clock < 500:
+        clock +=1
+        extract()
+        if axis == "x":
+            holding += x
+        if axis == "y":
+            holding += y
+        if axis == "z":
+            holding += z
+    return holding / 500
 
 # calibrating!
 # X CALIBRATION
-input("flip to +x side and press enter when ready)")
 extract()
-temp = x
-print("tempx: " + str(temp) + " ")
 
-input("flip to -x side and press enter when ready")
-while x == temp:    # accounts for divide by 0
-    extract()
-    sleep(0.01)
-print("negx: " + str(x) + "\n")
+input("Flip to +x side and press enter when ready)")
+temp = average("x")
 
-xerr = (temp + x) / 2
-xscl = 9.81 / ((temp - x) / 2)
+input("Flip to -x side and press enter when ready")
+temp2 = average("x")
+
+xerr = (temp + temp2) / 2
+xscl = 9.81 / ((temp - temp2) / 2)
 
 # Y CALIBRATION
-input("flip to +y side and press enter when ready")
-extract()
-temp = y
-print("tempy: " + str(temp) + " ")
+input("Flip to +y side and press enter when ready")
+temp = average("y")
 
-input("flip to -y side and press enter when ready")
-while y == temp:
-    extract()
-    sleep(0.01)
-print("negy: " + str(y) + "\n")
+input("Flip to -y side and press enter when ready")
+temp2 = average("y")
 
-yerr = (temp + y) / 2
-yscl = 9.81 / ((temp - y) / 2)
+yerr = (temp + temp2) / 2
+yscl = 9.81 / ((temp - temp2) / 2)
 
 # Z CALIBRATION
-input("flip to +z side and press enter when ready")
-extract()
-temp = z
-print("tempz: " + str(temp) + " ")
+input("Flip to +z side and press enter when ready")
+temp = average("z")
 
-input("flip to -z side and press enter when ready")
-while z == temp:
-    extract()
-    sleep(0.01)
-print("negz: " + str(z) + "\n")
+input("Flip to -z side and press enter when ready")
+temp2 = average("z")
 
-zerr = (temp + z) / 2
-zscl = 9.81 / ((temp - z) / 2)
+zerr = (temp + temp2) / 2
+zscl = 9.81 / ((temp - temp2) / 2)
 
 # print calibration results
 print("xerr: " + str(xerr) + ", xscl: " + str(xscl) + "\n")
@@ -94,6 +97,9 @@ print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
 velocity = [0, 0, 0]  # vx, vy, vz
 position = [0, 0, 0]  # px, py, pz
 # apply error and scale values to get calibrated values
+
+sleep(10)
+
 while True:
     extract()       # get current accel reading
     xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
@@ -101,15 +107,16 @@ while True:
     zCalib = (z - zerr) * zscl
 
     # integrate to get velocity
-    velocity[0] += xCalib
-    velocity[1] += yCalib
-    velocity[2] += zCalib
+    velocity[0] += (xCalib / 100)
+    velocity[1] += (yCalib / 100)
+    velocity[2] += ((zCalib - 9.81) / 100 )
     # integrate to get position
-    position[0] += velocity[0]
-    position[1] += velocity[1]
-    position[2] += velocity[2]
+    position[0] += (velocity[0] / 100)
+    position[1] += (velocity[1] / 100)
+    position[2] += (velocity[2] / 100)
 
-    print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
-    sleep(0.1)      # same delay as in arduino code
+    #print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
+    print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
+    sleep(0.01) # same delay as in arduino code
 
 #positions: +X, -X, +Y, -Y, +Z, -Z
