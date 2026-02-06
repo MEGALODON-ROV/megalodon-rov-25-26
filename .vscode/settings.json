@@ -1,4 +1,7 @@
 {
+<<<<<<< HEAD
+  "C_Cpp_Runner.msvcBatchPath": ""
+=======
     "python-envs.defaultEnvManager": "ms-python.python:conda",
     "python-envs.defaultPackageManager": "ms-python.python:conda",
     "python-envs.pythonProjects": [],
@@ -14,6 +17,8 @@
         "string": "cpp",
         "string_view": "cpp",
         "unordered_map": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "limits": "cpp"
     }
+>>>>>>> f117d10230a3acfe9a0004605cfa1599ad279abd
 }
