@@ -1,6 +1,6 @@
-#include "vector"
-#include "Servo.h"
-#include "MS5837.h"
+#include <vector>
+#include <ESP32Servo.h>
+#include <MS5837.h>
 
 int elapsedTime = 0;
 
@@ -9,6 +9,7 @@ const int SDApin = 42;
 MS5837 depthSensor;
 double depth; // in meters
 String depthString = "";
+String dataPacket = "";
 int targetAchievedTime = 0;
 boolean targetAchieved = false;
 
@@ -24,6 +25,7 @@ struct ProfileStep {
     int profileNum;    
     double targetDepth; //in meters
 };
+
 std::vector<ProfileStep> profileTable = {
     {1, 2.5},
     {1, 0.4},
@@ -31,9 +33,6 @@ std::vector<ProfileStep> profileTable = {
     {2, 0.4},
     {2, 0.0}
 };
-
-depthString = "";
-dataPacket = "";
 
 // initialize pressure sensor with necessary delays
 void initDepthSensor() {
@@ -71,7 +70,8 @@ void transmitData(){
 }
 
 void setup() {
-  linearServo.attach(9);    // MEGA pin 9
+  Serial.begin(115200);
+  linearServo.attach(02);    // pin 02
   initDepthSensor();
 }
 
@@ -84,8 +84,8 @@ void loop() {
     elapsedTime = millis();
 
     // put your main code here, to run repeatedly:
-    if(abs(targetDepth - depth > 0.05)) {
-      servoCurrent = 1500 + (targetDepth - depth) * kP;
+    if(abs(profileTable[currentIndex].targetDepth - depth > 0.05)) {
+      servoCurrent = 1500 + (profileTable[currentIndex].targetDepth - depth) * kP;
     }
 
     linearServo.writeMicroseconds(servoCurrent);
@@ -104,7 +104,7 @@ void loop() {
     getDepth();
     depthString += "Depth:" + String(depth) + ",";
 
-    dataPacket += companyNumber + totalTimeElapsed + depthString;
+    //dataPacket += companyNumber + totalTimeElapsed + depthString;
 
     Serial.println(dataPacket);
     dataPacket = "";
