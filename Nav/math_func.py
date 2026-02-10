@@ -87,7 +87,7 @@ def makeString(Lx, Ly, Rx, A, B, C, D, throttle_y, throttle_x, percent_horiz=100
 
 
     #capping the pwm values at 1900/1100 and round
-    pwmArray = [fr, fl, br, bl, vtr, vtl, vbr, vbl, servo]
+    pwmArray = [fr, fl, br, bl, vtr, vtl, vbr, vbl]
     for index in range(len(pwmArray)):
         # round to whole number
         pwmArray[index] = round(pwmArray[index])
@@ -107,7 +107,7 @@ def makeString(Lx, Ly, Rx, A, B, C, D, throttle_y, throttle_x, percent_horiz=100
                 str(pwmArray[5]) + "]" +
                 str(pwmArray[6]) + "/" +
                 str(pwmArray[7]) + "." +
-                str(pwmArray[8]) + "!"
+                str(servo) + "!"
                 )
 
 
