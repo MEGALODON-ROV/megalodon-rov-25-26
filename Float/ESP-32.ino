@@ -73,7 +73,7 @@ void transmitData(){
 void setup() {
   Serial.begin(115200);
   Wire.begin(SDApin, SCLpin);
-  linearServo.attach(02);    // pin 02
+  linearServo.attach(17);    // pin 17
   initDepthSensor();
 }
 
