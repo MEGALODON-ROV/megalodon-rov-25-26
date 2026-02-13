@@ -7,8 +7,9 @@ int elapsedTime = 0;
 
 const int SCLpin = 21;
 const int SDApin = 22;
-MS5837 depthSensor;
-double depth; // in meters
+MS5837 sensor;
+
+double depth = 0; // in meters
 String depthString = "";
 String dataPacket = "";
 int targetAchievedTime = 0;
@@ -38,20 +39,21 @@ std::vector<ProfileStep> profileTable = {
 // initialize pressure sensor with necessary delays
 void initDepthSensor() {
   delay(500);
-
+  Wire.begin(21, 22);  // SDA, SCL
   Serial.println("Initializing Depth Sensor...");
 
-  while (!depthSensor.init()) {
+  while (!sensor.init()) {
     Serial.println("Init failed!");
     Serial.println("Are SDA/SCL connected correctly?");
     Serial.println("Blue Robotics Bar02: White=SDA, Green=SCL");
     Serial.println("\n\n\n");
-    delay(5000);
+    delay(1000);
   }
 
-  depthSensor.setModel(MS5837::MS5837_02BA);
-  depthSensor.setFluidDensity(997);
-  depthSensor.init();
+
+  sensor.setModel(MS5837::MS5837_30BA); // try 02BA if this doesn't work
+  sensor.setFluidDensity(997); // freshwater
+  Serial.println("Sensor ready!");
 
   Serial.println("Success!\n");
 
@@ -60,8 +62,8 @@ void initDepthSensor() {
 
 // reads depth from pressure sensor
 void getDepth() {
-  depthSensor.read();
-  depth = (double) depthSensor.depth();  // float -> double
+  sensor.read();
+  depth = (double) sensor.depth();  // float -> double
   //depth -= baselineDepth;
 }
 
@@ -72,9 +74,10 @@ void transmitData(){
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(SDApin, SCLpin);
-  linearServo.attach(17);    // pin 17
+  delay(1000);
+  Serial.println("Started Serial");
   initDepthSensor();
+  linearServo.attach(17);    // pin 17
 }
 
 void loop() {
