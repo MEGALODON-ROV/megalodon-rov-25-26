@@ -5,8 +5,8 @@
 
 int elapsedTime = 0;
 
-const int SCLpin = 21;
-const int SDApin = 22;
+const int SCLpin = 22;
+const int SDApin = 21;
 MS5837 sensor;
 
 double depth = 0; // in meters
@@ -21,7 +21,7 @@ int servoMin = 600;
 int servoMax = 2300;
 int servoCurrent = 1500;
 
-double kP = 0; //change
+double kP = 4; //change
 
 struct ProfileStep {
     int profileNum;    
@@ -51,7 +51,7 @@ void initDepthSensor() {
   }
 
 
-  sensor.setModel(MS5837::MS5837_30BA); // try 02BA if this doesn't work
+  sensor.setModel(MS5837::MS5837_02BA); // try 02BA if this doesn't work
   sensor.setFluidDensity(997); // freshwater
   Serial.println("Sensor ready!");
 
@@ -68,7 +68,7 @@ void getDepth() {
 }
 
 void transmitData(){
-  linearServo.writeMicroseconds(600);
+  //linearServo.writeMicroseconds(600);
   //insert code here
 }
 
@@ -81,38 +81,36 @@ void setup() {
 }
 
 void loop() {
+  elapsedTime = millis();
+  getDepth();
+  //depthString += "Depth:" + String(depth) + ",";
+
   if (currentIndex > profileTable.size() - 1) {
     transmitData();
   } else {
     servoCurrent = constrain(servoCurrent, servoMin, servoMax);
 
-    elapsedTime = millis();
-
-    // put your main code here, to run repeatedly:
     if (abs(profileTable[currentIndex].targetDepth - depth) > 0.05) {
       servoCurrent = 1500 + (profileTable[currentIndex].targetDepth - depth) * kP;
+      Serial.println(servoCurrent);
     }
 
     linearServo.writeMicroseconds(servoCurrent);
     
-    if (depth < profileTable[currentIndex].targetDepth + 0.3 && depth > profileTable[currentIndex].targetDepth - 0.3 )
+    if ((depth < profileTable[currentIndex].targetDepth + 0.3) && (depth > profileTable[currentIndex].targetDepth - 0.3) && (targetAchieved == false))
     {
       targetAchieved = true;
       targetAchievedTime = millis();
     }
+
     if ((elapsedTime-targetAchievedTime >=30000) && (targetAchieved)) {
       targetAchieved = false;
       currentIndex++;
     }
 
-    //start depth collecting
-    getDepth();
-    depthString += "Depth:" + String(depth) + ",";
-
     //dataPacket += companyNumber + totalTimeElapsed + depthString;
-
-    Serial.println(dataPacket);
-    dataPacket = "";
-    depthString = "";
+    //Serial.println(dataPacket);
+    //dataPacket = "";
+    //depthString = "";
   }
 }
