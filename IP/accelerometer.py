@@ -1,7 +1,9 @@
 import serial
-from time import sleep
+import numpy as np
+import time
+import matplotlib.pyplot as plt
 
-cereal = serial.Serial("/dev/cu.usbmodem1101", 115200, timeout=1)
+cereal = serial.Serial("/dev/cu.usbmodem1101", 115200, timeout=1)   # change to your port if needed
 
 x = 0
 y = 0
@@ -57,6 +59,7 @@ def average(axis):
     return holding / 500
 
 # calibrating!
+# positions: +X, -X, +Y, -Y, +Z, -Z
 # X CALIBRATION
 extract()
 
@@ -97,14 +100,21 @@ print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
 velocity = [0, 0, 0]  # vx, vy, vz
 position = [0, 0, 0]  # px, py, pz
 # apply error and scale values to get calibrated values
+acceleration = np.empty((0, 4), float) # ax, ay, az, time
 
-sleep(10)
+time.sleep(10)
 
-while True:
+startingSeconds = time.time()
+
+# TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
+clock = 0
+while clock < 90000:    # 15 minutes at 100Hz
     extract()       # get current accel reading
     xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
     yCalib = (y - yerr) * yscl
     zCalib = (z - zerr) * zscl
+    if clock % 1000 == 0:
+        acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
 
     # integrate to get velocity
     velocity[0] += (xCalib / 100)
@@ -117,6 +127,26 @@ while True:
 
     #print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
     print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
-    sleep(0.01) # same delay as in arduino code
+    time.sleep(0.01) # same delay as in arduino code
+    clock += 1
 
-#positions: +X, -X, +Y, -Y, +Z, -Z
+# graph x acceleration data
+plt.plot(acceleration[:, 3], acceleration[:, 0])
+plt.xlabel('Time (s)')
+plt.ylabel('X Acceleration (m/s^2)')
+plt.title('X Acceleration vs Time')
+
+# graph y acceleration data
+plt.figure()
+plt.plot(acceleration[:, 3], acceleration[:, 1])
+plt.xlabel('Time (s)')
+plt.ylabel('Y Acceleration (m/s^2)')
+plt.title('Y Acceleration vs Time')
+
+# graph z acceleration data
+plt.figure()
+plt.plot(acceleration[:, 3], acceleration[:, 2])
+plt.xlabel('Time (s)')
+plt.ylabel('Z Acceleration (m/s^2)')
+plt.title('Z Acceleration vs Time')
+plt.show()
