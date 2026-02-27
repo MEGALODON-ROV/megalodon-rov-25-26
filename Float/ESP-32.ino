@@ -21,7 +21,7 @@ int servoMin = 600;
 int servoMax = 2300;
 int servoCurrent = 1500;
 
-double kP = 35; //change
+double kP = 130; //change
 
 struct ProfileStep {
     int profileNum;    
@@ -51,7 +51,7 @@ void initDepthSensor() {
   }
 
 
-  sensor.setModel(MS5837::MS5837_30BA); // try 02BA if this doesn't work
+  sensor.setModel(MS5837::MS5837_02BA); // try 02BA if this doesn't work
   sensor.setFluidDensity(997); // freshwater
   Serial.println("Sensor ready!");
 
@@ -69,6 +69,7 @@ void getDepth() {
 
 void transmitData(){
   linearServo.writeMicroseconds(600);
+  Serial.println("transmitting data");
   //insert code here
 }
 
@@ -101,7 +102,7 @@ void loop() {
 
     linearServo.writeMicroseconds(servoCurrent);
     
-    if (depth < profileTable[currentIndex].targetDepth + 0.3 && depth > profileTable[currentIndex].targetDepth - 0.3 )
+    if ((depth < profileTable[currentIndex].targetDepth + 0.3) && (depth > profileTable[currentIndex].targetDepth - 0.3) && (!targetAchieved))
     {
       targetAchieved = true;
       targetAchievedTime = millis();
@@ -113,13 +114,11 @@ void loop() {
 
     //start depth collecting
     getDepth();
-    depthString += "Depth:" + String(depth) + ",";
+    Serial.println("Depth:" + String(depth) + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth);
 
     //dataPacket += companyNumber + totalTimeElapsed + depthString;
 
-    Serial.println(servoCurrent);
     //dataPacket = "";
     //depthString = "";
   }
 }
-
