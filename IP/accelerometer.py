@@ -3,6 +3,8 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
+print("start")
+
 cereal = serial.Serial("/dev/cu.usbmodem11301", 115200, timeout=1)   # change to your port if needed
 
 x = 0
@@ -15,6 +17,11 @@ yerr = 0
 yscl = 0
 zerr = 0
 zscl = 0
+smoother1 = 0
+smoother2 = 0
+smoother3 = 0
+smoother4 = 0
+smoother5 = 0
 
 def extract():
     cereal.reset_input_buffer()  # Clear old data that builds up in queue
@@ -47,7 +54,7 @@ def extract():
 def average(axis):
     clock = 0
     holding = 0
-    while clock < 3000:
+    while clock < 1000:
         clock +=1
         extract()
         if axis == "x":
@@ -56,7 +63,7 @@ def average(axis):
             holding += y
         elif axis == "z":
             holding += z
-    return holding / 3000
+    return holding / 1000
 
 # calibrating!
 # positions: +X, -X, +Y, -Y, +Z, -Z
@@ -108,10 +115,27 @@ time.sleep(10)
 
 startingSeconds = time.time()
 
+def smoothedExtract()
+    smoother1 = smoother2
+    smoother2 = smoother3
+    smoother3 = smoother4
+    smoother4 = smoother5
+    smoother5 = extract()
+    avg = (smoother1 + smoother2 + smoother3 + smoother4 + smoother5) / 5
+    return avg
+
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+
 # TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
 clock = 0
-while clock < 18000:    # 3 minutes at 100Hz
-    extract()       # get current accel reading
+while clock < 6000:    # 1 minutes at 100Hz 
+                        # It actually works out to 140 seconds or so for some reason
+    smoothedExtract()       # get current accel reading
     xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
     yCalib = (y - yerr) * yscl
     zCalib = (z - zerr) * zscl
@@ -125,7 +149,7 @@ while clock < 18000:    # 3 minutes at 100Hz
     position[1] += (velocity[1] / 100)
     position[2] += (velocity[2] / 100)
 
-    if clock % 1000 == 0:
+    if clock % 100 == 0:
         acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
         vel_graphing = np.append(vel_graphing, [[velocity[0], velocity[1], velocity[2], time.time() - startingSeconds]], axis=0)
         dist_graphing = np.append(dist_graphing, [[position[0], position[1], position[2], time.time() - startingSeconds]], axis=0)
