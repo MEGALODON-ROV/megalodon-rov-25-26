@@ -3,11 +3,13 @@
 #include <SPI.h>
 #include "esp_system.h"
 
-#define SD_SCK 18
-#define SD_MISO 19
-#define SD_MOSI 23
+#define SD_SCK 18 //Serial clock
+#define SD_MISO 19 //master in slave out
+#define SD_MOSI 23 //master out slave in
 
 const int sd_cs = 5;
+
+int elapsedTime;
 
 void listDir(fs::FS &fs, const char * dirname) {
   Serial.print("DIR ");
@@ -130,6 +132,7 @@ void testFileIO(fs::FS &fs, const char * path) {
 }
 
 void setup() {
+  Serial.end();
   Serial.begin(115200);
   delay(1000);
   Serial.print("reset ");
@@ -165,11 +168,7 @@ void setup() {
   Serial.println("B"); 
 
   writeFile(SD, "/hello.txt", "Hello ");
-  appendFile(SD, "/hello.txt", "World\n");
-
-  readFile(SD, "/hello.txt");
-
-  testFileIO(SD, "/test.txt");
+  appendFile(SD, "/hello2.txt", "World\n");
 
   uint32_t totalMB = SD.totalBytes() / (1024 * 1024);
   uint32_t usedMB  = SD.usedBytes() / (1024 * 1024);
