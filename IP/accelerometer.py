@@ -101,6 +101,8 @@ velocity = [0, 0, 0]  # vx, vy, vz
 position = [0, 0, 0]  # px, py, pz
 # apply error and scale values to get calibrated values
 acceleration = np.empty((0, 4), float) # ax, ay, az, time
+vel_graphing = np.empty((0, 4), float) # vx, vy, vz, time
+dist_graphing = np.empty((0, 4), float) # px, py, pz, time
 
 time.sleep(10)
 
@@ -108,13 +110,11 @@ startingSeconds = time.time()
 
 # TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
 clock = 0
-while clock < 90000:    # 15 minutes at 100Hz
+while clock < 18000:    # 3 minutes at 100Hz
     extract()       # get current accel reading
     xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
     yCalib = (y - yerr) * yscl
     zCalib = (z - zerr) * zscl
-    if clock % 1000 == 0:
-        acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
 
     # integrate to get velocity
     velocity[0] += (xCalib / 100)
@@ -124,6 +124,11 @@ while clock < 90000:    # 15 minutes at 100Hz
     position[0] += (velocity[0] / 100)
     position[1] += (velocity[1] / 100)
     position[2] += (velocity[2] / 100)
+
+    if clock % 1000 == 0:
+        acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
+        vel_graphing = np.append(vel_graphing, [[velocity[0], velocity[1], velocity[2], time.time() - startingSeconds]], axis=0)
+        dist_graphing = np.append(dist_graphing, [[position[0], position[1], position[2], time.time() - startingSeconds]], axis=0)
 
     #print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
     print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
@@ -149,4 +154,24 @@ plt.plot(acceleration[:, 3], acceleration[:, 2])
 plt.xlabel('Time (s)')
 plt.ylabel('Z Acceleration (m/s^2)')
 plt.title('Z Acceleration vs Time')
+
+# graph velocity data
+plt.figure()
+plt.plot(vel_graphing[:, 3], vel_graphing[:, 0], label='Vx')
+plt.plot(vel_graphing[:, 3], vel_graphing[:, 1], label='Vy')
+plt.plot(vel_graphing[:, 3], vel_graphing[:, 2], label='Vz')
+plt.xlabel('Time (s)')
+plt.ylabel('Velocity (m/s)')
+plt.title('Velocity vs Time')
+plt.legend()
+
+# graph position data
+plt.figure()
+plt.plot(dist_graphing[:, 3], dist_graphing[:, 0], label='Px')
+plt.plot(dist_graphing[:, 3], dist_graphing[:, 1], label='Py')
+plt.plot(dist_graphing[:, 3], dist_graphing[:, 2], label='Pz')
+plt.xlabel('Time (s)')
+plt.ylabel('Position (m)')
+plt.title('Position vs Time')
+plt.legend()
 plt.show()
