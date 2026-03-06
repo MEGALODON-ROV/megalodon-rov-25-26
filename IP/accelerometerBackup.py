@@ -1,9 +1,10 @@
 import serial
-import numpy as np
-import time
-import matplotlib.pyplot as plt
+from time import sleep
 
-cereal = serial.Serial("/dev/cu.usbmodem11301", 115200, timeout=1)   # change to your port if needed
+
+
+
+cereal = serial.Serial("/dev/cu.usbmodem11301", 115200, timeout=1)
 
 x = 0
 y = 0
@@ -23,7 +24,7 @@ def extract():
     complete = line.__contains__(":done") and line.__contains__("start+")
 
     if not complete:
-        print("bad data")
+        #print("bad data")
         extract()
     else:
 
@@ -48,7 +49,6 @@ def average(axis):
     clock = 0
     holding = 0
     while clock < 3000:
-        clock +=1
         extract()
         if axis == "x":
             holding += x
@@ -56,14 +56,14 @@ def average(axis):
             holding += y
         elif axis == "z":
             holding += z
+        clock += 1
     return holding / 3000
 
 # calibrating!
-# positions: +X, -X, +Y, -Y, +Z, -Z
 # X CALIBRATION
 extract()
 
-input("Flip to +x side and press enter when ready)")
+input("Flip to +x side and press enter when ready")
 temp = average("x")
 
 input("Flip to -x side and press enter when ready")
@@ -100,21 +100,14 @@ print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
 velocity = [0, 0, 0]  # vx, vy, vz
 position = [0, 0, 0]  # px, py, pz
 # apply error and scale values to get calibrated values
-acceleration = np.empty((0, 4), float) # ax, ay, az, time
 
-time.sleep(10)
+sleep(10)
 
-startingSeconds = time.time()
-
-# TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
-clock = 0
-while clock < 90000:    # 15 minutes at 100Hz
+while True:
     extract()       # get current accel reading
     xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
     yCalib = (y - yerr) * yscl
     zCalib = (z - zerr) * zscl
-    if clock % 1000 == 0:
-        acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
 
     # integrate to get velocity
     velocity[0] += (xCalib / 100)
@@ -127,26 +120,6 @@ while clock < 90000:    # 15 minutes at 100Hz
 
     #print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
     print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
-    time.sleep(0.01) # same delay as in arduino code
-    clock += 1
+    sleep(0.01) # same delay as in arduino code
 
-# graph x acceleration data
-plt.plot(acceleration[:, 3], acceleration[:, 0])
-plt.xlabel('Time (s)')
-plt.ylabel('X Acceleration (m/s^2)')
-plt.title('X Acceleration vs Time')
-
-# graph y acceleration data
-plt.figure()
-plt.plot(acceleration[:, 3], acceleration[:, 1])
-plt.xlabel('Time (s)')
-plt.ylabel('Y Acceleration (m/s^2)')
-plt.title('Y Acceleration vs Time')
-
-# graph z acceleration data
-plt.figure()
-plt.plot(acceleration[:, 3], acceleration[:, 2])
-plt.xlabel('Time (s)')
-plt.ylabel('Z Acceleration (m/s^2)')
-plt.title('Z Acceleration vs Time')
-plt.show()
+#positions: +X, -X, +Y, -Y, +Z, -Z
