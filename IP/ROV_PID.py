@@ -1,36 +1,105 @@
+import accelerometer
+import time
+
 pidLateral = [0, 0, 0]
 pidAngular = [0, 0, 0]
 pidUp = [0, 0, 0]
 pidDown = [0, 0, 0]
-
+output = [0, 0, 0, 0, 0, 0]      # CHANGE to be a list in format of thruster values
 maintainPos = True
 
-def PID(x, y, z, pitch, roll, yaw):
+def depthPID(goalZ):
     kP = 0
     kI = 0
     kD = 0
-    current_position = 0 # REPLACE with sensor returned value
-    lateralError = [current_position - x, current_position - y, current_position - z]
-    angularError = [current_position - pitch, current_position - roll, current_position - yaw]
+    currZ = accelerometer.position[2]
+    error = goalZ - currZ
     integral = 0
     previous_error = 0
     derivative = 0
     # printf ("Target position: %f\n", target_position)
     while maintainPos:
-        # when going down
-        if target_position <= current_position:
+        if goalZ <= currZ:
             kP = pidDown[0]
             kI = pidDown[1]
             kD = pidDown[2]
         
-        # when going up
         else:
             kP = pidUp[0]
             kI = pidUp[1]
             kD = pidUp[2]
         
+        currZ = accelerometer.position[2]
+        error = goalZ - currZ
+        integral += error
+        derivative = error - previous_error
+
+        # CHANGE make sure output index is correct for depth thrusters
+            # and values are bounded correctly for thrusters
+        output[0] = kP * error + kI * integral + kD * derivative
+
+        previous_error = error
+
+        # USE THE OUTPUT VALUE (send to thrusters)
+        # DELAY TO PREVENT THE LOOP FROM RUNNING TOO FAST
+        time.sleep(0.3)
+
+def lateralPID(x, y):
+    kP = pidLateral[0]
+    kI = pidLateral[1]
+    kD = pidLateral[2]
+
+    currX = accelerometer.position[0]
+    errorX = x - currX
+    integralX = 0
+    prevErrX = 0
+    derivativeX = 0
+
+    currY = accelerometer.position[1]
+    errorY = y - currY
+    integralY = 0
+    prevErrY = 0
+    derivativeY = 0
+    # printf ("Target position: %f\n", target_position)
+    while maintainPos:
+        # handle x first
+        currX = accelerometer.position[0]
+        errorX = x - currX
+        integralX += errorX
+        derivativeX = errorX - prevErrX
+
+        # CHANGE make sure output index is correct for lateral thrusters
+            # and values are bounded correctly for thrusters
+        output[0] = kP * errorX + kI * integralX + kD * derivativeX
+
+        prevErrX = errorX
+
+        # handle y next
+        currY = accelerometer.position[1]
+        errorY = y - currY
+        integralY += errorY
+        derivativeY = errorY - prevErrY
+
+        # CHANGE make sure output index is correct for lateral thrusters
+            # and values are bounded correctly for thrusters
+        output[0] = kP * errorY + kI * integralY + kD * derivativeY
+        prevErrY = errorY
+        # DELAY TO PREVENT THE LOOP FROM RUNNING TOO FAST
+        time.sleep(0.3)
+
+def angularPID(pitch, roll, yaw):
+    kP = pidAngular[0]
+    kI = pidAngular[1]
+    kD = pidAngular[2]
+    currAngles = [0, 0, 0] # REPLACE with sensor returned value
+    errors = [pitch - currAngles[0], roll - currAngles[1], yaw - currAngles[2]]
+    integral = 0
+    previous_error = 0
+    derivative = 0
+    # printf ("Target position: %f\n", target_position)
+    while maintainPos:
         current_position = 0 # REPLACE with sensor returned value
-        error = current_position - target_position
+        error = current_position - pitch
         integral += error
         derivative = error - previous_error
         output = kP * error + kI * integral + kD * derivative
@@ -39,30 +108,4 @@ def PID(x, y, z, pitch, roll, yaw):
 
         # USE THE OUTPUT VALUE
         # DELAY TO PREVENT THE LOOP FROM RUNNING TOO FAST
-    '''
-    # loop to get to target position
-    while (abs(error) > ERROR_ALLOWED):  # Continue until the error is within a small range
-        current_position = 0 # REPLACE with sensor returned value
-        error = current_position - target_position
-        integral += error
-        derivative = error - previous_error
-        output = kP * error + kI * integral + kD * derivative
-        if output < 1100:
-            output = 1100  # Minimum throttle value
-        elif output > 1900:
-            output = 1900  # Maximum throttle value
-        
-        # USE THE OUTPUT VALUE
-        
-        previous_error = error
-        # Add delay to prevent the loop from running too fast
-    '''
-    '''
-    # some kind of code to hold position?
-    # either more PID-based or if robot is nice there could be some
-        # throttle value that just keeps it in place
-    while (0 - time_started < TIME_TO_HOLD):    # REPLACE 0 WITH CURRENT TIME FUNCTION
-        # maintain position
-        # USE THE OUTPUT VALUE
-        pass
-    '''
+        time.sleep(0.3)
