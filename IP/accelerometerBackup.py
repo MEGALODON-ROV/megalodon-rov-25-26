@@ -1,7 +1,7 @@
 import serial
 from time import sleep
 
-cereal = serial.Serial("/dev/cu.usbmodem11301", 115200, timeout=1)
+cereal = serial.Serial("/dev/cu.usbmodem11101", 115200, timeout=1)
 
 x = 0
 y = 0

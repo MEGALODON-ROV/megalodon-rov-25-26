@@ -6,23 +6,23 @@ import matplotlib.pyplot as plt
 print("start")
 
 # execute immediately
-cereal = serial.Serial("/dev/cu.usbmodem11301", 115200, timeout=1)   # change to your port if needed
+cereal = serial.Serial("/dev/cu.usbmodem11101", 115200, timeout=1)   # change to your port if needed
 
 x = 0
 y = 0
 z = 0
 temp = 0
 xerr = 0
-xscl = 0
+xscl = 1
 yerr = 0
-yscl = 0
+yscl = 1
 zerr = 0
-zscl = 0
-smoother1 = 0
-smoother2 = 0
-smoother3 = 0
-smoother4 = 0
-smoother5 = 0
+zscl = 1
+smoother1 = [0,0,0]
+smoother2 = [0,0,0]
+smoother3 = [0,0,0]
+smoother4 = [0,0,0]
+smoother5 = [0,0,0]
 
 # velocity and position lists for graphing and position tracking
 velocity = [0, 0, 0]  # vx, vy, vz
@@ -61,14 +61,16 @@ def extract():
             pass
 
 def smoothedExtract():
-    global smoother1, smoother2, smoother3, smoother4, smoother5
+    global smoother1, smoother2, smoother3, smoother4, smoother5, x, y, z
+    extract()
     smoother1 = smoother2
     smoother2 = smoother3
     smoother3 = smoother4
     smoother4 = smoother5
-    smoother5 = extract()
-    avg = (smoother1 + smoother2 + smoother3 + smoother4 + smoother5) / 5
-    return avg
+    smoother5 = [x, y, z]
+    x = (smoother1[0] + smoother2[0] + smoother3[0] + smoother4[0] + smoother5[0]) / 5
+    y = (smoother1[1] + smoother2[1] + smoother3[1] + smoother4[1] + smoother5[1]) / 5
+    z = ((smoother1[2] + smoother2[2] + smoother3[2] + smoother4[2] + smoother5[2]) / 5)
 
 def average(axis):
     clock = 0
@@ -84,11 +86,12 @@ def average(axis):
             holding += z
     return holding / 1000
 
-# calibrating!
 # positions: +X, -X, +Y, -Y, +Z, -Z
 def calibrate():
     # X CALIBRATION
-    #extract() seems to be necessary since we're not using the accel data here???
+    #extract()  seems to be unnecessary since we're not using the accel data here???
+            #   Laura, This is why I avoid comments, What does this mean ^ ?
+            #   Also, you put everything a function without ever calling the function
 
     input("Flip to +x side and press enter when ready)")
     temp = average("x")
@@ -123,10 +126,10 @@ def calibrate():
     print("xerr: " + str(xerr) + ", xscl: " + str(xscl) + "\n")
     print("yerr: " + str(yerr) + ", yscl: " + str(yscl) + "\n")
     print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
+    time.sleep(5)
 
 def trackPosition():
-    for _ in range(6):
-        smoothedExtract()
+    global acceleration, vel_graphing, dist_graphing
 
     # TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
     startingSeconds = time.time()
@@ -200,3 +203,12 @@ def graphAll():
     plt.title('Position vs Time')
     plt.legend()
     plt.show()
+
+calibrate()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+smoothedExtract()
+trackPosition()
