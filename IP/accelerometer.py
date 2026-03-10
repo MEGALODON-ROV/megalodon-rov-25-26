@@ -89,9 +89,8 @@ def average(axis):
 # positions: +X, -X, +Y, -Y, +Z, -Z
 def calibrate():
     # X CALIBRATION
-    #extract()  seems to be unnecessary since we're not using the accel data here???
-            #   Laura, This is why I avoid comments, What does this mean ^ ?
-            #   Also, you put everything a function without ever calling the function
+    #extract() seems to be unnecessary since we're not using the accel data here???
+    global xerr, xscl, yerr, yscl, zerr, zscl
 
     input("Flip to +x side and press enter when ready)")
     temp = average("x")
@@ -129,7 +128,7 @@ def calibrate():
     time.sleep(5)
 
 def trackPosition():
-    global acceleration, vel_graphing, dist_graphing
+    global velocity, position, acceleration, vel_graphing, dist_graphing
 
     # TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
     startingSeconds = time.time()
