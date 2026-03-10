@@ -148,7 +148,7 @@ def trackPosition():
         position[2] += (velocity[2] / 100)
 
         if clock % 100 == 0:    # TEMPORARY, for testing
-            acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
+            acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib-9.81, time.time() - startingSeconds]], axis=0)
             vel_graphing = np.append(vel_graphing, [[velocity[0], velocity[1], velocity[2], time.time() - startingSeconds]], axis=0)
             dist_graphing = np.append(dist_graphing, [[position[0], position[1], position[2], time.time() - startingSeconds]], axis=0)
 
