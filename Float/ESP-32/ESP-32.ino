@@ -183,7 +183,7 @@ void loop() {
 
     getDepth();
 
-    dataPacket = "MEGALODON ROV \n" + "Time:" + elapsedTime + "Depth:" + String(depth) + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
-    appendFile(SD, "/data_packet1.txt", dataPacket);
+    dataPacket = String("MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
+    appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
   }
 }
