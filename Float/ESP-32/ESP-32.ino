@@ -2,12 +2,22 @@
 #include <ESP32Servo.h>
 #include <MS5837.h>
 #include <Wire.h>
+#include "FS.h"
+#include "SD.h"
+#include <SPI.h>
+#include "esp_system.h"
 
 int elapsedTime = 0;
 
 const int SCLpin = 21;
 const int SDApin = 22;
 MS5837 sensor;
+
+#define SD_SCK 18
+#define SD_MISO 19
+#define SD_MOSI 23
+
+const int sd_cs = 5;
 
 double depth = 0; // in meters
 String depthString = "";
@@ -73,12 +83,71 @@ void transmitData(){
   //insert code here
 }
 
+void writeFile(fs::FS &fs, const char * path, const char * msg) {
+  Serial.print("write ");
+  Serial.println(path);
+
+  File file = fs.open(path, FILE_WRITE);
+  if (!file) {
+    Serial.println("open fail");
+    return;
+  }
+
+  if (file.print(msg)) Serial.println("ok");
+  else Serial.println("fail");
+
+  file.close();
+}
+
+void readFile(fs::FS &fs, const char * path) {
+  Serial.print("read ");
+  Serial.println(path);
+
+  File file = fs.open(path);
+  if (!file) {
+    Serial.println("open fail");
+    return;
+  }
+
+  while (file.available()) {
+    Serial.write(file.read());
+  }
+  Serial.println();
+
+  file.close();
+}
+
+void appendFile(fs::FS &fs, const char * path, const char * msg) {
+  Serial.print("append ");
+  Serial.println(path);
+
+  File file = fs.open(path, FILE_APPEND);
+  if (!file) {
+    Serial.println("open fail");
+    return;
+  }
+
+  if (file.print(msg)) Serial.println("ok");
+  else Serial.println("fail");
+
+  file.close();
+}
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
   Serial.println("Started Serial");
   initDepthSensor();
   linearServo.attach(17);    // pin 17
+
+  SPI.begin(SD_SCK, SD_MISO, SD_MOSI, sd_cs);
+  if (!SD.begin(sd_cs)) {
+    Serial.println("mount fail");
+  } else {
+    Serial.println("mounted");
+  }
+
+    writeFile(SD, "/data_packet1.txt", "MEGALODON ROV DATA PACKET \n");
 }
 
 void loop() {
@@ -112,13 +181,9 @@ void loop() {
       currentIndex++;
     }
 
-    //start depth collecting
     getDepth();
-    Serial.println("Depth:" + String(depth) + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth);
 
-    //dataPacket += companyNumber + totalTimeElapsed + depthString;
-
-    //dataPacket = "";
-    //depthString = "";
+    dataPacket = String("MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
+    appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
   }
 }

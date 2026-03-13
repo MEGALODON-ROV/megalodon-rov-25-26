@@ -162,16 +162,10 @@ void setup() {
   Serial.print("sizeMB ");
   Serial.println(cardMB);
 
-  Serial.println("list root");
-  Serial.println("A");  
-  listDir(SD, "/");
-  Serial.println("B"); 
-
-  writeFile(SD, "/hello.txt", "Hello ");
-  appendFile(SD, "/hello2.txt", "World\n");
-
   uint32_t totalMB = SD.totalBytes() / (1024 * 1024);
   uint32_t usedMB  = SD.usedBytes() / (1024 * 1024);
+
+  listDir(SD, "/");
 
   Serial.print("totalMB ");
   Serial.println(totalMB);
