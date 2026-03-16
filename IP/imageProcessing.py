@@ -1,5 +1,6 @@
 import accelerometer
 import ROV_PID
+import video_taking
 import threading
 import time
 from enum import Enum
@@ -21,6 +22,7 @@ primaryAxis = primaryAxisOfMovement.Y # REPLACE with correct axis via user input
 # TAKE FIRST SNAPSHOT OF SITUATION HERE
 for _ in range(6):
     accelerometer.smoothedExtract()
+
 
 # adjust for second snapshot
 ROV_PID.maintainPos = True  # keep PID loops running
