@@ -68,14 +68,14 @@ def smoothedExtract():
     smoother3 = smoother4
     smoother4 = smoother5
     smoother5 = [x, y, z]
-    x = (smoother1[0] + smoother2[0] + smoother3[0] + smoother4[0] + smoother5[0]) / 5
-    y = (smoother1[1] + smoother2[1] + smoother3[1] + smoother4[1] + smoother5[1]) / 5
+    x = ((smoother1[0] + smoother2[0] + smoother3[0] + smoother4[0] + smoother5[0]) / 5)
+    y = ((smoother1[1] + smoother2[1] + smoother3[1] + smoother4[1] + smoother5[1]) / 5)
     z = ((smoother1[2] + smoother2[2] + smoother3[2] + smoother4[2] + smoother5[2]) / 5)
 
 def average(axis):
     clock = 0
     holding = 0
-    while clock < 1000:
+    while clock < 3000:
         clock +=1
         extract()
         if axis == "x":
@@ -84,7 +84,7 @@ def average(axis):
             holding += y
         elif axis == "z":
             holding += z
-    return holding / 1000
+    return holding / 3000
 
 # positions: +X, -X, +Y, -Y, +Z, -Z
 def calibrate():
@@ -101,7 +101,7 @@ def calibrate():
     xerr = (temp + temp2) / 2
     xscl = 9.81 / ((temp - temp2) / 2)
 
-    # Y CALIBRATION
+    """# Y CALIBRATION
     input("Flip to +y side and press enter when ready")
     temp = average("y")
 
@@ -119,12 +119,12 @@ def calibrate():
     temp2 = average("z")
 
     zerr = (temp + temp2) / 2
-    zscl = 9.81 / ((temp - temp2) / 2)
+    zscl = 9.81 / ((temp - temp2) / 2)"""
 
     # print calibration results
     print("xerr: " + str(xerr) + ", xscl: " + str(xscl) + "\n")
-    print("yerr: " + str(yerr) + ", yscl: " + str(yscl) + "\n")
-    print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
+    #print("yerr: " + str(yerr) + ", yscl: " + str(yscl) + "\n")
+    #print("zerr: " + str(zerr) + ", zscl: " + str(zscl) + "\n")
     time.sleep(5)
 
 def trackPosition():
@@ -133,30 +133,37 @@ def trackPosition():
     # TEMP TESTING CODE CHANGE LOOPING CONDITION BACK TO TRUE LATER
     startingSeconds = time.time()
     clock = 0   # TEMPORARY, for testing
-    while clock < 6000:    # 1 minute at 100Hz 
+    while clock < 6000:    # ~70 seconds at 200Hz 
                             # It actually works out to 140 seconds or so for some reason
         smoothedExtract()       # get current accel reading
         xCalib = (x - xerr) * xscl  # change to correct calibrated value lol
-        yCalib = (y - yerr) * yscl
-        zCalib = (z - zerr) * zscl
+        yCalib = 0 #(y - yerr) * yscl
+        zCalib = 0 #(z - zerr) * zscl
+
+        if abs(xCalib) < 0.1:        # Deadband filtering
+            xCalib = 0
+        if abs(yCalib) < 0.1:
+            yCalib = 0
+        if abs(zCalib - 9.81) < 0.1:
+            zCalib = 9.81
 
         # integrate to get velocity
         velocity[0] += (xCalib / 100)
-        velocity[1] += (yCalib / 100)
-        velocity[2] += ((zCalib - 9.81) / 100 )
+        #velocity[1] += (yCalib / 100)
+        #velocity[2] += ((zCalib - 9.81) / 100 )
         # integrate to get position
         position[0] += (velocity[0] / 100)
-        position[1] += (velocity[1] / 100)
-        position[2] += (velocity[2] / 100)
+        #position[1] += (velocity[1] / 100)
+        #position[2] += (velocity[2] / 100)
 
-        if clock % 100 == 0:    # TEMPORARY, for testing
-            acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib-9.81, time.time() - startingSeconds]], axis=0)
+        if clock % 10 == 0:    # TEMPORARY, for testing
+            acceleration = np.append(acceleration, [[xCalib, yCalib, zCalib, time.time() - startingSeconds]], axis=0)
             vel_graphing = np.append(vel_graphing, [[velocity[0], velocity[1], velocity[2], time.time() - startingSeconds]], axis=0)
             dist_graphing = np.append(dist_graphing, [[position[0], position[1], position[2], time.time() - startingSeconds]], axis=0)
 
         #print(str(xCalib) + ", " + str(yCalib) + ", " + str(zCalib))
-        print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
-        time.sleep(0.01) # same delay as in arduino code
+        #print(str(round(position[0])) + ", " + str(round(position[1])) + ", " + str(round(position[2])))
+        time.sleep(0.005) # same delay as in arduino code
         clock += 1  # TEMPORARY, for testing
     
     graphAll()      # TEMPORARY, for testing
