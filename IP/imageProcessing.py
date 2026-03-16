@@ -23,7 +23,7 @@ primaryAxis = primaryAxisOfMovement.Y # REPLACE with correct axis via user input
 for _ in range(6):
     accelerometer.smoothedExtract()
 
-video_taking.take_video()  # this will block until the user finishes taking the video
+file1 = video_taking.take_video()  # this will block until the user finishes taking the video
 
 # adjust for second snapshot
 ROV_PID.maintainPos = True  # keep PID loops running
@@ -40,7 +40,7 @@ ROV_PID.angularPID(0, 0, 0)
 
 
 # TAKE SECOND SNAPSHOT OF SITUATION HERE
-video_taking.take_video()  # this will block until the user finishes taking the video
+file2 = video_taking.take_video()  # this will block until the user finishes taking the video
 
 
 ROV_PID.maintainPos = False  # stop PID loops once done taking snapshot
