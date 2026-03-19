@@ -1,5 +1,5 @@
 import cv2
-import calibrateCameras as calib
+import IP.calibrateCameras as calib
 import glob
 
 # probs need to change to have 1 file for calibration images

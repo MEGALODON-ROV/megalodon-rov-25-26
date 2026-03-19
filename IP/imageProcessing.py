@@ -25,6 +25,9 @@ for _ in range(6):
 
 file1 = video_taking.take_video()  # this will block until the user finishes taking the video
 
+# DRIVER MOVES BACKWARDS
+
+
 # adjust for second snapshot
 ROV_PID.maintainPos = True  # keep PID loops running
 if primaryAxis == primaryAxisOfMovement.X:
