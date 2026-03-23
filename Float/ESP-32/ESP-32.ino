@@ -80,6 +80,7 @@ void getDepth() {
 void transmitData(){
   linearServo.writeMicroseconds(600);
   Serial.println("transmitting data");
+  getData();
   //insert code here
 }
 
@@ -133,9 +134,46 @@ void appendFile(fs::FS &fs, const char * path, const char * msg) {
   file.close();
 }
 
+void listDir(fs::FS &fs, const char * dirname) {
+  Serial.print("DIR ");
+  Serial.println(dirname);
+
+  File root = fs.open(dirname);
+  if (!root || !root.isDirectory()) {
+    Serial.println("open fail");
+    return;
+  }
+
+  bool found = false;
+
+  while (true) {
+    File file = root.openNextFile();
+    if (!file) break;
+
+    found = true;
+
+    if (file.isDirectory()) {
+      Serial.print("D ");
+      Serial.println(file.name());
+    } else {
+      Serial.print("F ");
+      Serial.print(file.name());
+      Serial.print(" ");
+      Serial.println((uint32_t)file.size());
+    }
+
+    file.close();
+  }
+
+  if (!found) Serial.println("empty");
+
+  root.close();
+}
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
+
   Serial.println("Started Serial");
   initDepthSensor();
   linearServo.attach(17);    // pin 17
@@ -183,7 +221,7 @@ void loop() {
 
     getDepth();
 
-    dataPacket = String("MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
+    dataPacket = String(" MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
     appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
   }
 }

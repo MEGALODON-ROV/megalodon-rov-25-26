@@ -131,10 +131,8 @@ void testFileIO(fs::FS &fs, const char * path) {
   Serial.println("1MB write done");
 }
 
-void setup() {
+void getData() {
   Serial.end();
-  Serial.begin(115200);
-  delay(1000);
   Serial.print("reset ");
   Serial.println(esp_reset_reason());
 
@@ -162,10 +160,12 @@ void setup() {
   Serial.print("sizeMB ");
   Serial.println(cardMB);
 
+  listDir(SD, "/");
+
+  readFile(SD, "/data_packet1.txt");
+
   uint32_t totalMB = SD.totalBytes() / (1024 * 1024);
   uint32_t usedMB  = SD.usedBytes() / (1024 * 1024);
-
-  listDir(SD, "/");
 
   Serial.print("totalMB ");
   Serial.println(totalMB);
@@ -174,5 +174,6 @@ void setup() {
   Serial.println(usedMB);
 }
 
-void loop() {
-}
+void setup() {}
+
+void loop() {}
