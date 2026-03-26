@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
+import takeCheckerboardCalibPics as takePics
 # import os
 import glob     # for easier file searching
 
 def calibrate_camera():
+    takePics.takePic()  # Take calibration pictures
+
     # Defining the dimensions of checkerboard
     CHECKERBOARD = (6,9)        # change
     # criteria for termination of the iterative process of corner refinement
@@ -43,7 +46,7 @@ def calibrate_camera():
 
     # Extracting path of individual image stored in a given directory
     # images of checkerboard taken by camera to be calibrated!
-    images = glob.glob('./images/*.jpg')        # all .jpg files in images/ folder
+    images = glob.glob('./calibration_images/*.jpg')        # all .jpg files in /calibration_images/ folder
     for fileName in images:
         img = cv2.imread(fileName)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

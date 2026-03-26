@@ -1,6 +1,8 @@
 import cv2
 import os
 
+from IP import undistortCameras
+
 def take_video():
     base_path = os.path.dirname(__file__)
 
@@ -15,11 +17,11 @@ def take_video():
     # For the VideoWriter func, may have to switch path.
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     index = 0
-    trialPath = os.path.join(base_path, "measuring_vid" + str(index) + ".mp4")
-    while os.path.exists(trialPath):
+    videoPath = os.path.join(base_path, "measuring_vid" + str(index) + ".mp4")
+    while os.path.exists(videoPath):
         index += 1
-        trialPath = os.path.join(base_path, "measuring_vid" + str(index) + ".mp4")
-    out = cv2.VideoWriter(trialPath, fourcc, 20.0, (frame_width, frame_height))
+        videoPath = os.path.join(base_path, "measuring_vid" + str(index) + ".mp4")
+    out = cv2.VideoWriter(videoPath, fourcc, 20.0, (frame_width, frame_height))
 
     while True:
         ret, frame = cam.read()
@@ -39,4 +41,5 @@ def take_video():
     out.release()
     cv2.destroyAllWindows()
 
-    return trialPath        # return the path to the video file for later use in image processing
+    undistortedVideoPath = undistortCameras.undistort(videoPath, os.path.join(base_path, "measuring_vid_undistorted" + str(index) + ".mp4"))
+    return undistortedVideoPath        # return the path to the video file for later use in image processing
