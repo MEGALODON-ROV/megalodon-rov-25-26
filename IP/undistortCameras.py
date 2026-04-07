@@ -1,5 +1,5 @@
 import cv2
-import IP.calibrateCameras as calib
+import calibrateCameras as calib
 import glob
 
 def undistort(input_video_path, output_video_path):

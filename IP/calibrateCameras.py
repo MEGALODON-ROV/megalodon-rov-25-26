@@ -7,7 +7,7 @@ import glob     # for easier file searching
 def calibrate_camera():
     takePics.takePic()  # Take calibration pictures
 
-    # Defining the dimensions of checkerboard
+    # Defining the dimensions of checkerboard (number of INNER corners)
     CHECKERBOARD = (6,9)        # change
     # criteria for termination of the iterative process of corner refinement
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -21,7 +21,7 @@ def calibrate_camera():
         # are world coordinates of the checkerboard corners
     objpoints = []
     # Creating vector to store vectors of 2D points for corners in each checkerboard image
-        # are coordinates distorted by the camera lens
+        # are coordinates distorted by the camera lens, pixel coordinates
     imgpoints = []
 
 
@@ -68,7 +68,7 @@ def calibrate_camera():
         them on the images of checker board
         """
         if ret == True:
-            objpoints.append(objp)
+            objpoints.append(objp.copy())
             # refining pixel coordinates for given 2d points (sub-pixel precision!)
                 # for better calibration accuracy
             corners2 = cv2.cornerSubPix(gray, corners, (11,11),(-1,-1), criteria)
@@ -117,3 +117,6 @@ def calibrate_camera():
     print("dist: \n{}".format(dist))
     print("w: {}, h: {}".format(w, h))
     return mtx, dist, w, h
+
+if __name__ == "__main__":
+    calibrate_camera()

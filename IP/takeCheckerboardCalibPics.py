@@ -4,6 +4,8 @@ import cv2
 import os
 
 def takePic():
+    print("Taking pictures for calibration now.")
+    print("Press 's' to save an image, and 'q' to quit the camera feed.")
     # create images folder if it doesn't exist
     if not os.path.exists('calibration_images'):
         os.makedirs('calibration_images')
@@ -15,28 +17,35 @@ def takePic():
             os.remove(file_path)
 
     # open camera
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)        # use cv2.CAP_DSHOW to tell openCV
+                                                    # to use camera driver backend
+                                                    # instead of default backend
 
     while True:
         # read frame from camera
         ret, frame = cap.read()
 
-        # display the frame
-        cv2.imshow('frame', frame)
+        if ret:
+            # display the frame
+            cv2.imshow('frame', frame)
 
-        # wait for key press
-        key = cv2.waitKey(3) & 0xFF
+            # wait for key press
+            key = cv2.waitKey(3) & 0xFF
 
-        # if 's' is pressed, save the image
-        if key == ord('s'):
-            img_name = f"calibration_images/checkers_{len(os.listdir('calibration_images'))}.jpg"
-            cv2.imwrite(img_name, frame)
-            print(f"Image saved: {img_name}")
+            # if 's' is pressed, save the image
+            if key == ord('s'):
+                img_name = f"calibration_images/checkers_{len(os.listdir('calibration_images'))}.jpg"
+                cv2.imwrite(img_name, frame)
+                print(f"Image saved: {img_name}")
 
-        # if 'q' is pressed, exit the loop
-        elif key == ord('q'):
-            break
+            # if 'q' is pressed, exit the loop
+            elif key == ord('q'):
+                break
 
     # release the camera and close windows
     cap.release()
     cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    takePic()
