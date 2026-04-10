@@ -82,6 +82,8 @@ while loop:
 
         received = arduino.readline().decode("ascii")
         print(received)
+
+        sleep(0.003)
             
 # ---------- END MAIN PROGRAM LOOP ---------- #
 
@@ -102,7 +104,7 @@ pygame.quit()
 # Serial.begin(9600); // set the baud rate
 # delay(2000);
 # Serial.println("Arduino is ready!");
-# }
+# } 
 
 # void loop() {
 
