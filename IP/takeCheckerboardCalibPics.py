@@ -4,8 +4,6 @@ import cv2
 import os
 
 def takePic():
-    print("Taking pictures for calibration now.")
-    print("Press 's' to save an image, and 'q' to quit the camera feed.")
     # create images folder if it doesn't exist
     if not os.path.exists('calibration_images'):
         os.makedirs('calibration_images')

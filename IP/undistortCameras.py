@@ -1,6 +1,21 @@
+import os
 import cv2
-import calibrateCameras as calib
 import glob
+import numpy as np
+
+# the file where calibration parameters are saved after running calibrateCameras.py
+CALIB_FILE = os.path.join(os.path.dirname(__file__), "calib_data.npz")
+
+def load_calib_params():
+    if not os.path.exists(CALIB_FILE):
+        print("Calibration file not found. Please run calibrateCameras.py first.")
+        return None
+    data = np.load(CALIB_FILE)
+    mtx = data['mtx']
+    dist = data['dist']
+    w = data['w']
+    h = data['h']
+    return mtx, dist, w, h
 
 def undistort(input_video_path, output_video_path):
     # probs need to change to have 1 file for calibration images
@@ -11,8 +26,10 @@ def undistort(input_video_path, output_video_path):
     # and hardcode them into the undistortion script
     images = glob.glob('./images/*.jpg')  # all .jpg files in /images/ folder
         # "./" means current directory
-    mtx, dist, w, h = calib.calibrate_camera()
-        # w and h are the width and height of the images used for calibration
+    mtx, dist, w, h = load_calib_params()
+    if mtx is None:
+        print("Failed to load calibration parameters.")
+        return
 
     # open input video
     cap = cv2.VideoCapture(input_video_path)
@@ -63,5 +80,3 @@ def undistort(input_video_path, output_video_path):
     
     cap.release()
     out.release()
-
-    return output_video_path

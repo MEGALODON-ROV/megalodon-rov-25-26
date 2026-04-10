@@ -1,14 +1,18 @@
+import os
 import cv2
 import numpy as np
 import takeCheckerboardCalibPics as takePics
 # import os
 import glob     # for easier file searching
 
+CALIB_FILE = os.path.join(os.path.dirname(__file__), "calib_data.npz")     # file to save
+                                                                           # calibration parameters to
+
 def calibrate_camera():
     takePics.takePic()  # Take calibration pictures
 
     # Defining the dimensions of checkerboard (number of INNER corners)
-    CHECKERBOARD = (6,9)        # change
+    CHECKERBOARD = (8,5)        # columns, rows
     # criteria for termination of the iterative process of corner refinement
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
                                                     # stop after 30 iterations
@@ -53,11 +57,11 @@ def calibrate_camera():
 
         # Find the chess board corners
         # If desired number of corners are found in the image then ret = true
-        ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_FAST_CHECK + cv2.CALIB_CB_NORMALIZE_IMAGE)
+        ret, corners = cv2.findChessboardCorners(gray, CHECKERBOARD, cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_NORMALIZE_IMAGE)
                                                 # what the flags do:
                                                     # adaptive threshholding for varying
                                                         # lighting conditions
-                                                    # reject images w/o a checkerboard
+                                                    # reject images w/o a checkerboard (for now deleted cv2.CALIB_CB_FAST_CHECK)
                                                     # normalize image brightness
                                                         # before processing
 
@@ -94,6 +98,7 @@ def calibrate_camera():
     and corresponding pixel coordinates of the 
     detected corners (imgpoints)
     """
+    print("Calibrating camera now...")
     reproj, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
         # reproj: reprojection error - how well the calibration worked, lower = better
         # mtx: 3 x 3 camera matrix - intrinsic parameters
@@ -111,12 +116,17 @@ def calibrate_camera():
             # each vector is [x, y, z] distance
                 # from optical center to checkboard's origin in world units
     
-    print("rvecs: \n{}".format(rvecs))
-    print("tvecs: \n{}".format(tvecs))
-    print("Camera matrix: \n{}".format(mtx))
-    print("dist: \n{}".format(dist))
-    print("w: {}, h: {}".format(w, h))
-    return mtx, dist, w, h
+
+    # # printing results
+    # print("rvecs: \n{}".format(rvecs))
+    # print("tvecs: \n{}".format(tvecs))
+    # print("Camera matrix: \n{}".format(mtx))
+    # print("dist: \n{}".format(dist))
+    # print("w: {}, h: {}".format(w, h))
+
+    # save calibration parameters to file
+    np.savez(CALIB_FILE, mtx=mtx, dist=dist, w=w, h=h)
+    print("Done calibrating")
 
 if __name__ == "__main__":
     calibrate_camera()
