@@ -1,24 +1,20 @@
 
 #include <Servo.h>
 
-int BR_PWM;
-int FL_PWM;
-int BL_PWM;
-int FR_PWM;
-int VTR_PWM;
-int VTL_PWM;
-int VBR_PWM;
-int VBL_PWM;
 
-Servo FL_T; //left front
-Servo BL_T; //left back
-Servo FR_T; //right front
-Servo BR_T; //right back
-Servo VTR_T;
-Servo VTL_T;
-Servo VBR_T;
-Servo VBL_T;
+Servo LBF_T; // yellow
+Servo RBB_T; // black
+Servo LBB_T; // green
+Servo RBF_T; // grey
 
+Servo RTF_T; // dark purple (purple not connected to gnd)
+Servo LTF_T; // white
+Servo LTB_T; // orange
+Servo RTB_T;
+
+Servo thrusterInit[8] = {LBF_T, RBB_T, LBB_T, RBF_T, RTF_T, LTF_T, LTB_T, RTB_T};
+
+    
 
 
 boolean test = true;
@@ -27,93 +23,87 @@ boolean test = true;
 void setup() {
   Serial.begin(9600);
 
-  //add corresponding pin numbers like this: FL_T.attach(1)
+      // lbf 4, ltb 5, lbb 8, rbf 6, rtf 7, ltf 9, rtb 3, rbb 11
+
+      // lbf 4, rtb 5, lbb 8, rbf 6, rtf 7, ltf 3, rtb 5, ltb 11 
+      // 4, 5, 8, 6, 7, 3, 5, 11
+
+      // Servo Thrusters[8] = {LBF_T 4, RBB_T 5, LBB_T 8, RBF_T 6, RTF_T 7, LTF_T 3, LTB_T 5, RTB_T 11};
+
+  //add corresponding pin numbers like this: FL_T.1)
   LBF_T.attach(4); // yellow
-  RBB_T.attach(11); // black
+  RBB_T.attach(3); // black
   LBB_T.attach(8); // green
   RBF_T.attach(6); // grey
 
   RTF_T.attach(7); // dark purple (purple not connected to gnd)
   LTF_T.attach(9); // white
-  LTB_T.attach(5); // orange
-  RTB_T.attach(3); // blue
+  LTB_T.attach(11); // orange
+  RTB_T.attach(5); // blue
 
-  FL_T.writeMicroseconds(1500); //
-  BR_T.writeMicroseconds(1500); //
-  BL_T.writeMicroseconds(1500); //
-  FR_T.writeMicroseconds(1500); //
+  for (int i = 0; i < 8; i++)
+  {
+    thrusterInit[i].writeMicroseconds(1500);
+  }
 
-  VTR_T.writeMicroseconds(1500);
-  VTL_T.writeMicroseconds(1500);
-  VBR_T.writeMicroseconds(1500); //
-  VBL_T.writeMicroseconds(1500);
+  LBF_T.writeMicroseconds(1500); // yellow
+  RBB_T.writeMicroseconds(1500); // black
+  LBB_T.writeMicroseconds(1500); // green
+  RBF_T.writeMicroseconds(1500); // grey
+
+  RTF_T.writeMicroseconds(1500); // dark purple (purple not connected to gnd)
+  LTF_T.writeMicroseconds(1500); // white
+  LTB_T.writeMicroseconds(1500); // orange
+  RTB_T.writeMicroseconds(1500); // blue
 
   
-  delay(5000);
+  delay(7000);
 }
 
 
 
 void loop()
 {
-    
+
   
-  // if test
-  // {
-    // Servo Thrusters[8] = {FL_T, BL_T, FR_T, BR_T, VTR_T, VTL_T, VBR_T, VBL_T};
+  if (test)
+  {
+    Servo Thrusters[8] = {LBF_T, RBB_T, LBB_T, RBF_T, RTF_T, LTF_T, LTB_T, RTB_T};
+    String thrusterNames[8] = {"LBF_T", "RBB_T", "LBB_T", "RBF_T", "RTF_T", "LTF_T", "LTB_T", "RTB_T"};
 
-  VBL_T.writeMicroseconds(1600);
+    // testAll(Thrusters);
+    testEach(Thrusters, thrusterNames);
+  }
+}
+
+void testAll(Servo Thrusters[])
+{
+
+  for (int i = 0; i < 8; i++)
+  {
+    Thrusters[i].writeMicroseconds(1600);
+  }
+
   delay(2500);
-  VBL_T.writeMicroseconds(1500);
-  delay(500);
-  VBR_T.writeMicroseconds(1600);
-  delay(2500);
-  VBR_T.writeMicroseconds(1500);
-  delay(500);
-  BR_T.writeMicroseconds(1600);
-  delay(2500); //
-  BR_T.writeMicroseconds(1600);
-  delay(500);
-    
 
-  //   for (int i = 0; i < 8; i++)
-  //   {
-  //     Thrusters[i].writeMicroseconds(1500);
-  //   }
-    
-  //   for (int i = 0; i < 8; i++)
-  //   {
-  //     Servo thruster = Thrusters[i];
-  //     thruster.writeMicroseconds(1600);
-  //     delay(2500);
-  //     thruster.writeMicroseconds(1500);
-  //     delay(500);
-  //   }
+  for (int i = 0; i < 8; i++)
+  {
+    Thrusters[i].writeMicroseconds(1500);
+  }
+}
 
-  //   test = false;
+void testEach(Servo Thrusters[], String thrusterNames[])
+{
+  for (int i = 0; i < 8; i++)
+  {
+    Servo thruster = Thrusters[i];
+    String name = thrusterNames[i];
 
-  //   delay(1500);
-  // }
-  // // FL_T.writeMicroseconds(1600); //
-  // BR_T.writeMicroseconds(1600); //
-  // BL_T.writeMicroseconds(1600); //
-  // FR_T.writeMicroseconds(1600); //
+    Serial.println("Now Testing " + name);
+    thruster.writeMicroseconds(1600);
+    delay(2500);
+    thruster.writeMicroseconds(1500);
+    delay(500);
+  }
 
-  // VTR_T.writeMicroseconds(1600);
-  // VTL_T.writeMicroseconds(1600);
-  // VBR_T.writeMicroseconds(1600); //
-  // VBL_T.writeMicroseconds(1600);
-
-  // delay(5000);
-
-  // FL_T.writeMicroseconds(1500); //
-  // BR_T.writeMicroseconds(1500); //
-  // BL_T.writeMicroseconds(1500); //
-  // FR_T.writeMicroseconds(1500); //
-
-  // VTR_T.writeMicroseconds(1500);
-  // VTL_T.writeMicroseconds(1500);
-  // VBR_T.writeMicroseconds(1500); //
-  // VBL_T.writeMicroseconds(1500);
-  
 }
