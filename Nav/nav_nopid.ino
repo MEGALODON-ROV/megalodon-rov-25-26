@@ -24,29 +24,18 @@ int pos = 0;
 
 void setup() {
   Serial.begin(9600);
-
-  //add corresponding pin numbers like this: LBF_T.attach(1)
-  // LBF_T.attach(9); //
-  // RBB_T.attach(8); //
-  // LBB_T.attach(7); //
-  // RBF_T.attach(6); //
-
-  // RTF_T.attach(5);
-  // LTF_T.attach(3);
-  // RTB_T.attach(2); //
-  // LTB_T.attach(1); // 3.1 back, 2.8 forward
+  
+  //add corresponding pin numbers like this: FL_T.1)
   LBF_T.attach(4); // yellow
-  RBB_T.attach(11); // LBBack
+  RBB_T.attach(3); // black
   LBB_T.attach(8); // green
   RBF_T.attach(6); // grey
 
   RTF_T.attach(7); // dark purple (purple not connected to gnd)
   LTF_T.attach(9); // white
-  LTB_T.attach(5); // orange
-  RTB_T.attach(3); // LBBue
+  LTB_T.attach(11); // orange
+  RTB_T.attach(5); // blue
   claw.attach(10);
-
-
 
   delay(2000);
 }
@@ -97,7 +86,7 @@ void loop() {
     }
     else
     {
-      pos = -180;
+      pos = 0;
     }
 
     
