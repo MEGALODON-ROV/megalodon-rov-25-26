@@ -12,10 +12,11 @@ Servo LTF_T; // white
 Servo LTB_T; // orange
 Servo RTB_T;
 
+Servo claw;
+
+// lbf, rbb, lbb, rbf, rtf, ltf, ltb, rtb 
+
 Servo thrusterInit[8] = {LBF_T, RBB_T, LBB_T, RBF_T, RTF_T, LTF_T, LTB_T, RTB_T};
-
-    
-
 
 boolean test = true;
 
@@ -23,43 +24,39 @@ boolean test = true;
 void setup() {
   Serial.begin(9600);
 
-      // lbf 4, ltb 5, lbb 8, rbf 6, rtf 7, ltf 9, rtb 3, rbb 11
-
-      // lbf 4, rtb 5, lbb 8, rbf 6, rtf 7, ltf 3, rtb 5, ltb 11 
-      // 4, 5, 8, 6, 7, 3, 5, 11
-
-      // Servo Thrusters[8] = {LBF_T 4, RBB_T 5, LBB_T 8, RBF_T 6, RTF_T 7, LTF_T 3, LTB_T 5, RTB_T 11};
-
   //add corresponding pin numbers like this: FL_T.1)
-  LBF_T.attach(4); // yellow
-  RBB_T.attach(3); // black
+  LBF_T.attach(3); // yellow
+  RBB_T.attach(5); // black
   LBB_T.attach(8); // green
   RBF_T.attach(6); // grey
 
   RTF_T.attach(7); // dark purple (purple not connected to gnd)
   LTF_T.attach(9); // white
-  LTB_T.attach(11); // orange
-  RTB_T.attach(5); // blue
+  LTB_T.attach(2); // orange
+  RTB_T.attach(11); // blue
 
   for (int i = 0; i < 8; i++)
   {
     thrusterInit[i].writeMicroseconds(1500);
   }
 
-  LBF_T.writeMicroseconds(1500); // yellow
-  RBB_T.writeMicroseconds(1500); // black
-  LBB_T.writeMicroseconds(1500); // green
-  RBF_T.writeMicroseconds(1500); // grey
+  // MAY NEED TO UNCOMMENT THIS IF NO WORK
 
-  RTF_T.writeMicroseconds(1500); // dark purple (purple not connected to gnd)
-  LTF_T.writeMicroseconds(1500); // white
-  LTB_T.writeMicroseconds(1500); // orange
-  RTB_T.writeMicroseconds(1500); // blue
+  // LBF_T.writeMicroseconds(1500); // yellow
+  // RBB_T.writeMicroseconds(1500); // black
+  // LBB_T.writeMicroseconds(1500); // green
+  // RBF_T.writeMicroseconds(1500); // grey
+
+  // RTF_T.writeMicroseconds(1500); // dark purple (purple not connected to gnd)
+  // LTF_T.writeMicroseconds(1500); // white
+  // LTB_T.writeMicroseconds(1500); // orange
+  // RTB_T.writeMicroseconds(1500); // blue
+
+  claw.write(0);
 
   
   delay(7000);
 }
-
 
 
 void loop()
@@ -73,8 +70,10 @@ void loop()
 
     // testAll(Thrusters);
     testEach(Thrusters, thrusterNames);
+    test = false;
   }
 }
+
 
 void testAll(Servo Thrusters[])
 {
@@ -92,6 +91,7 @@ void testAll(Servo Thrusters[])
   }
 }
 
+
 void testEach(Servo Thrusters[], String thrusterNames[])
 {
   for (int i = 0; i < 8; i++)
@@ -106,4 +106,11 @@ void testEach(Servo Thrusters[], String thrusterNames[])
     delay(500);
   }
 
+}
+
+void testClaw()
+{
+  claw.write(360);
+  delay(1000);
+  claw.write(0);
 }
