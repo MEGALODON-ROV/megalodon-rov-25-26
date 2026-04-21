@@ -65,14 +65,14 @@ void setup() {
   Wire.begin();
 
   LBF_T.attach(4); //
-  RBB_T.attach(8); //
-  LBB_T.attach(10); //
+  RBB_T.attach(11); //
+  LBB_T.attach(8); //
   RBF_T.attach(6); //
 
-  RTF_T.attach(3);
-  LTF_T.attach(7);
-  LTB_T.attach(9); //
-  RTB_T.attach(5); // 3.1 back, 2.8 forward
+  RTF_T.attach(7);
+  LTF_T.attach(9);
+  LTB_T.attach(5); //
+  RTB_T.attach(3); // 3.1 back, 2.8 forward
 
   initDepthSensor(7);
   caliRBBateDepth();
