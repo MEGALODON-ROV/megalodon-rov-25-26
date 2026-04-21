@@ -1,6 +1,13 @@
 import calibrateCameras as calib
 import video_taking as vid
 
+windows = True
+
+usesWindows = input("Do you use a windows computer? (Y/N)")
+if (usesWindows.lower() == 'n'):
+    windows = False
+    print("Bruh. Lock in :(")
+
 shouldCalib = input("Do you want to re-calibrate the camera? (Y/N): ")
 if (shouldCalib.lower() == 'y'):
     print("Instructions:")
