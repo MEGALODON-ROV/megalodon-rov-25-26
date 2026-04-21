@@ -15,15 +15,12 @@ else:
     w = data['w']
     h = data['h']
 
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (frame_width, frame_height), 0, (frame_width, frame_height))
-mapx, mapy=cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (frame_width, frame_height), 5)
-
 def take_video():
     base_path = os.path.dirname(__file__)
 
     # Open the robot's camera
-    cam1 = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    cam2 = cv2.VideoCapture(0, cv2.CAP_DSHOW)       # use cv2.CAP_DSHOW to tell openCV
+    cam1 = cv2.VideoCapture(0)
+    cam2 = cv2.VideoCapture(0)       # use cv2.CAP_DSHOW to tell openCV
                                                     # to use camera driver backend
                                                     # instead of default backend
 
@@ -32,6 +29,9 @@ def take_video():
     frame_height1 = int(cam1.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_width2 = int(cam2.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height2 = int(cam2.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (frame_width1, frame_height1), 0, (frame_width1, frame_height1))
+    mapx, mapy=cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (frame_width1, frame_height1), 5)
 
     # Define the codec and create VideoWriter object. 
     # For the VideoWriter func, may have to switch path.
@@ -57,7 +57,8 @@ def take_video():
 
         if ret1:
             # Write the frame to the output file3
-            out1.write(cv2.remap(frame1, mapx, mapy, cv2.INTER_LINEAR))
+            frame1 = cv2.remap(frame1, mapx, mapy, cv2.INTER_LINEAR)
+            out1.write(frame1)
 
             # Display the captured frame
             cv2.imshow('Camera 1', frame1)
@@ -71,7 +72,8 @@ def take_video():
 
         if ret2:
             # Write the frame to the output file
-            out2.write(cv2.remap(frame2, mapx, mapy, cv2.INTER_LINEAR))
+            frame2 = cv2.remap(frame2, mapx, mapy, cv2.INTER_LINEAR)
+            out2.write(frame2)
 
             # Display the captured frame
             cv2.imshow('Camera 2', frame2)
