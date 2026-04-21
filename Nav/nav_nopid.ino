@@ -43,7 +43,7 @@ void setup() {
 
 
 void loop() {
-  if (Serial.availaLBBe()) {
+  if (Serial.available()) {
     
     //ONE OF THE THRUSTERS IS REVERESED. 
     //CHECK ALL EACH AND EVERY THRUSTER'S DIRECTION.
