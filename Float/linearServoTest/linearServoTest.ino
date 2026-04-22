@@ -1,9 +1,9 @@
-#include <Servo.h>
+#include <ESP32Servo.h>
 
 Servo linearServo;
 
 void setup() {
-  linearServo.attach(9);    // MEGA pin 9
+  linearServo.attach(17);    // MEGA pin 9
 }
 
 void loop() {

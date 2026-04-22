@@ -31,7 +31,7 @@ int servoMin = 600;
 int servoMax = 2300;
 int servoCurrent = 1500;
 
-double kP = 130; //change
+double kP = 350; //change
 
 struct ProfileStep {
     int profileNum;    
@@ -39,10 +39,10 @@ struct ProfileStep {
 };
 
 std::vector<ProfileStep> profileTable = {
-    {1, 2.5},
-    {1, 0.4},
-    {2, 2.5},
-    {2, 0.4},
+    {1, 1.8}, //depth thingy
+    {1, 0.8},
+    {2, 1.8},
+    {2, 0.8},
     {2, 0.0}
 };
 
@@ -73,8 +73,10 @@ void initDepthSensor() {
 // reads depth from pressure sensor
 void getDepth() {
   sensor.read();
-  depth = (double) sensor.depth();  // float -> double
-  //depth -= baselineDepth;
+  double temp = (double) sensor.depth();
+  if (abs(depth-temp)<0.7) {
+    depth = temp;
+  }
 }
 
 void transmitData(){
@@ -185,7 +187,9 @@ void setup() {
     Serial.println("mounted");
   }
 
-    writeFile(SD, "/data_packet1.txt", "MEGALODON ROV DATA PACKET \n");
+  linearServo.writeMicroseconds(2300);
+  delay(30000);
+  writeFile(SD, "/data_packet1.txt", "MEGALODON ROV DATA PACKET \n");
 }
 
 void loop() {
@@ -193,11 +197,11 @@ void loop() {
     transmitData();
   } else {
 
-    elapsedTime = millis();
+    elapsedTime = int(millis()/1000);
 
     // put your main code here, to run repeatedly:
     if (abs(profileTable[currentIndex].targetDepth - depth) > 0.05) {
-      servoCurrent = 1500 + (profileTable[currentIndex].targetDepth - depth) * kP;
+      servoCurrent = 1500 + (depth - profileTable[currentIndex].targetDepth) * kP;
       if(servoCurrent < servoMin)
       {
         servoCurrent = 600;
@@ -212,9 +216,9 @@ void loop() {
     if ((depth < profileTable[currentIndex].targetDepth + 0.3) && (depth > profileTable[currentIndex].targetDepth - 0.3) && (!targetAchieved))
     {
       targetAchieved = true;
-      targetAchievedTime = millis();
+      targetAchievedTime = (int) millis()/1000;
     }
-    if ((elapsedTime-targetAchievedTime >=30000) && (targetAchieved)) {
+    if ((elapsedTime-targetAchievedTime >=30) && (targetAchieved)) {
       targetAchieved = false;
       currentIndex++;
     }
@@ -223,5 +227,6 @@ void loop() {
 
     dataPacket = String(" MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
     appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
+    Serial.println(dataPacket);
   }
 }
