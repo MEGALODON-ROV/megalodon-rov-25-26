@@ -5,6 +5,7 @@ cereal = serial.Serial("/dev/cu.usbmodem11101", 15200, timeout=1)
 # Change the port as needed (ex. if Windows, COM3 or something like that)
 
 FACTOR = 1.004288867 # depth sent by sensor to actual depth
+OFFSET = 0.161498
 
 def extract():
     cereal.reset_input_buffer()  # Clear old data that builds up in queue
@@ -25,7 +26,7 @@ def extract():
         except ValueError:
             pass
 
-    return float(data) * FACTOR
+    return (float(data) * FACTOR) + OFFSET
 
 if __name__ == "__main__":
     while True:
