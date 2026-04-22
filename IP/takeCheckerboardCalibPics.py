@@ -3,7 +3,7 @@
 import cv2
 import os
 
-def takePic():
+def takePic(camIndex=1):
     # create images folder if it doesn't exist
     if not os.path.exists('calibration_images'):
         os.makedirs('calibration_images')
@@ -15,7 +15,7 @@ def takePic():
             os.remove(file_path)
 
     # open camera
-    cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)        # use cv2.CAP_DSHOW to tell openCV
+    cap = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)        # use cv2.CAP_DSHOW to tell openCV
                                                     # to use camera driver backend
                                                     # instead of default backend
 

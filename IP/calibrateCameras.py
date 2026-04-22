@@ -8,8 +8,8 @@ import glob     # for easier file searching
 CALIB_FILE = os.path.join(os.path.dirname(__file__), "calib_data.npz")     # file to save
                                                                            # calibration parameters to
 
-def calibrate_camera():
-    takePics.takePic()  # Take calibration pictures
+def calibrate_camera(camIndex=1):
+    takePics.takePic(camIndex)  # Take calibration pictures
 
     # Defining the dimensions of checkerboard (number of INNER corners)
     CHECKERBOARD = (8,5)        # columns, rows

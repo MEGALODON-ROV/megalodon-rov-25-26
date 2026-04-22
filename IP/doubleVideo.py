@@ -20,7 +20,7 @@ def take_video():
 
     # Open the robot's camera
     cam1 = cv2.VideoCapture(0)
-    cam2 = cv2.VideoCapture(0)       # use cv2.CAP_DSHOW to tell openCV
+    cam2 = cv2.VideoCapture(1, cv2.CAP_DSHOW)       # use cv2.CAP_DSHOW to tell openCV
                                                     # to use camera driver backend
                                                     # instead of default backend
 
@@ -91,11 +91,6 @@ def take_video():
     out1.release()
     out2.release()
     cv2.destroyAllWindows()
-
-    undistortedVideoPath = os.path.join(base_path, "measuring_vid_undistorted" + str(index) + ".mp4")
-
-    undistortCameras.undistort(videoPath, undistortedVideoPath)
-    return undistortedVideoPath        # return the path to the video file for later use in image processing
 
 if __name__ == "__main__":
     take_video()

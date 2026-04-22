@@ -2,11 +2,11 @@ import cv2
 import os
 import undistortCameras
 
-def take_video():
+def take_video(camIndex=1):
     base_path = os.path.dirname(__file__)
 
     # Open the robot's camera
-    cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)        # use cv2.CAP_DSHOW to tell openCV
+    cam = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)        # use cv2.CAP_DSHOW to tell openCV
                                                     # to use camera driver backend
                                                     # instead of default backend
 
