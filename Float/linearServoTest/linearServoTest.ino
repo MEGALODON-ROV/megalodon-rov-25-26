@@ -8,14 +8,10 @@ void setup() {
 
 void loop() {
   // Extend
-  linearServo.writeMicroseconds(2000);  
-  delay(2000);
-
-  // Half way
-  linearServo.writeMicroseconds(1500);  
+  linearServo.writeMicroseconds(2300);  
   delay(2000);
 
   // Retract
-  linearServo.writeMicroseconds(1000);  
+  linearServo.writeMicroseconds(600);  
   delay(2000);
 }

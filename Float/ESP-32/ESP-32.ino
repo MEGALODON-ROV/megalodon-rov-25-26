@@ -80,7 +80,7 @@ void getDepth() {
 }
 
 void transmitData(){
-  linearServo.writeMicroseconds(600);
+  linearServo.writeMicroseconds(2300);
   Serial.println("transmitting data");
   getData();
   //insert code here
@@ -193,11 +193,11 @@ void setup() {
 }
 
 void loop() {
-  if (currentIndex > profileTable.size() - 1) {
+  if ((currentIndex > profileTable.size() - 1)||(elapsedTime > 90)) {
     transmitData();
   } else {
 
-    elapsedTime = int(millis()/1000);
+    elapsedTime = (int) millis()/1000;
 
     // put your main code here, to run repeatedly:
     if (abs(profileTable[currentIndex].targetDepth - depth) > 0.05) {
