@@ -20,9 +20,11 @@ def findCamIndex():
                     # Press 'q' to exit the loop
                     if cv2.waitKey(1) == ord('y') or cv2.waitKey(1) == ord('Y'):
                         cap.release()
+                        cv2.destroyAllWindows()
                         return i
                     elif cv2.waitKey(1) == ord('n') or cv2.waitKey(1) == ord('N'):
                         cap.release()
+                        cv2.destroyAllWindows()
                         break
 
     return 0
@@ -40,6 +42,7 @@ if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex()
 
 shouldCalib = input("Do you want to re-calibrate the camera? (Y/N): ")
+shouldCalib = input("Are you ABSOLUTELY sure? (Y/N): ")
 if (shouldCalib.lower() == 'y'):
     print("Instructions:")
     print("1. Place 8x5 inner corner (colxrow) checkerboard in front of the camera.")
