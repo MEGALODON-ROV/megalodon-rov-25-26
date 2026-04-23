@@ -1,29 +1,38 @@
-#include <Arduino.h>    // this line is just for PlatformIO, not for ArduinoIDE
-// https://github.com/bluerobotics/BlueRobotics_MS5837_Library
-
 #include <Wire.h>
 #include "MS5837.h"
 
-MS5837 depthSensor;
+MS5837 sensor;
 
 void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(15200);
+  
+  Serial.begin(9600);
+  
+  Serial.println("Starting");
+  
   Wire.begin();
 
-  depthSensor.setModel(MS5837::MS5837_02BA);
-
-  // density of freshwater kg/m^3
-  depthSensor.setFluidDensity(997);
+  // Initialize pressure sensor
+  // Returns true if initialization was successful
+  // We can't continue with the rest of the program unless we can initialize the sensor
+  while (!sensor.init()) {
+    Serial.println("Init failed!");
+    Serial.println("Are SDA/SCL connected correctly?");
+    Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
+    Serial.println("\n\n\n");
+    delay(5000);
+  }
+  
+  sensor.setModel(MS5837::MS5837_02BA);
+  sensor.setFluidDensity(997); // kg/m^3 (freshwater, 1029 for seawater)
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  depthSensor.read();
+  // Update pressure and temperature readings
+  sensor.read();
 
   Serial.print("s+");
-  Serial.print(depthSensor.depth());
+  Serial.print(sensor.depth());
   Serial.println("-e");
 
-  delay(15);
+  delay(100);
 }
