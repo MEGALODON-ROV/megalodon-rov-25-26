@@ -159,6 +159,7 @@ void loop() {
       tick = 0;
     }    
 
+    depthSensor.read()
     Serial.println(
                "RBF_PWM: " + String(RBF_PWM) + ", " + 
                "LBF_PWM: " + String(LBF_PWM) + ", " + 
@@ -167,7 +168,8 @@ void loop() {
                "RTF_VERT: " + String(RTF_PWM) + ", " + 
                "LTF_VERT: " + String(LTF_PWM) + ", " + 
                "LTB_VERT: " + String(LTB_PWM) + ", " +
-               "RTB_VERT: " + String(RTB_PWM) + ", ");
+               "RTB_VERT: " + String(RTB_PWM) + "; " +
+               String(depthSensor.depth()));
 
     LBF_T.writeMicroseconds(LBF_PWM);
     LBB_T.writeMicroseconds(LBB_PWM);

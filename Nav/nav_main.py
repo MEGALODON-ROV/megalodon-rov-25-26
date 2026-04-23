@@ -3,6 +3,9 @@ import serial
 import math_func
 from time import sleep
 
+FACTOR = 1.004288867 # depth sent by sensor to actual depth
+OFFSET = 0.161498
+
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
 arduino = serial.Serial('COM3', 9600)
@@ -41,6 +44,7 @@ while loop:
     # event handler
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
+            print("Quit")
             loop = False
 
     # Get count of interactables.
@@ -81,7 +85,10 @@ while loop:
         arduino.write(messageToSend) 
 
         received = arduino.readline().decode("ascii")
+        PWMs, depth = received.split(";")
         print(received)
+        print(depth)
+        print((float(depth) * FACTOR) + OFFSET)
 
         sleep(0.003)
             
