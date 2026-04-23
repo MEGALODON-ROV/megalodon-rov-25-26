@@ -85,10 +85,11 @@ while loop:
         arduino.write(messageToSend) 
 
         received = arduino.readline().decode("ascii")
-        PWMs, depth = received.split(";")
         print(received)
-        print(depth)
-        print((float(depth) * FACTOR) + OFFSET)
+        if ";" in received:
+            PWMs, depth = received.split(";")
+            print(depth)
+            print((float(depth) * FACTOR) + OFFSET)
 
         sleep(0.003)
             
