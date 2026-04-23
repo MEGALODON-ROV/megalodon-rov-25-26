@@ -4,12 +4,13 @@ import video_taking as vid
 from cv2_enumerate_cameras import enumerate_cameras
 
 FRONTCAM = 1
+BOTTOMCAM = 2
 
-def findCamIndex():
+def findCamIndex(camSide = "FRONT"):
     for i in range(10):
         cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
         if cap.isOpened():      # camera exists at the index
-            print("Is this FRONT camera? (Y/N): ")
+            print("Is this {} camera? (Y/N): ".format(camSide))
             while True:
                 ret, frame = cap.read()
 
@@ -39,7 +40,8 @@ if (usesWindows.lower() == 'n'):
 print("Please plug in EVERYTHING RIGHT NOW!")
 plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
-    FRONTCAM = findCamIndex()
+    FRONTCAM = findCamIndex("FRONT")
+    BOTTOMCAM = findCamIndex("BOTTOM")
 
 shouldCalib = input("Do you want to re-calibrate the camera? (Y/N): ")
 shouldCalib = input("Are you ABSOLUTELY sure? (Y/N): ")
