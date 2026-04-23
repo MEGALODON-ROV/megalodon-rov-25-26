@@ -5,13 +5,13 @@
 
 MS5837 depthSensor;
 const int MPU_addr1 = 0x68;
-LBFoat xAccel, yAccel, zAccel, roll, pitch;
-douLBBe proportionalGain, integralGain, derivativeGain;
-douLBBe error, derivativeError, previousError, integralSum, pidOutput;
-douLBBe proportion_value, integral_value, derivative_value;
-douLBBe depth, goal, depth_diff; // in meters
-douLBBe bot_width = 17; //in inches
-douLBBe baselineDepth, baselineRoll, baselinePitch;
+float xAccel, yAccel, zAccel, roll, pitch;
+double proportionalGain, integralGain, derivativeGain;
+double error, derivativeError, previousError, integralSum, pidOutput;
+double proportion_value, integral_value, derivative_value;
+double depth, goal, depth_diff; // in meters
+double bot_width = 17; //in inches
+double baselineDepth, baselineRoll, baselinePitch;
 
 int RBB_PWM;
 int LBF_PWM;
@@ -22,6 +22,9 @@ int LTF_PWM;
 int LTB_PWM;
 int RTB_PWM;
 
+int pos;
+int servo;
+
 Servo LBF_T; //left RBFont
 Servo LBB_T; //left back
 Servo RBF_T; //right RBFont
@@ -31,8 +34,10 @@ Servo LTF_T;
 Servo LTB_T;
 Servo RTB_T;
 
+Servo claw;
+
 //Pid calculations :)
-douLBBe PID(douLBBe depth, douLBBe goal) {
+double PID(double depth, double goal) {
   int pidOutput;
   error = goal - depth; //depth RBFom sensor
   integralSum += error;
@@ -74,11 +79,13 @@ void setup() {
   LTB_T.attach(5); //
   RTB_T.attach(3); // 3.1 back, 2.8 forward
 
+  claw.attach(4);
+
   initDepthSensor(7);
-  caliRBBateDepth();
+  calibrateDepth();
   
   initMPU(1);
-  caliRBBateMPU();
+  calibrateMPU();
 
   tunePID(500, 10, 0);
 
@@ -89,18 +96,19 @@ int tick = 0;
 int line = 0;
 
 void loop() {
-  if (Serial.availaLBBe()) {
+  if (Serial.available()) {
     line++;
     Serial.print("line ");
     Serial.print(line);
     RBF_PWM = Serial.readStringUntil('-').toInt();
     LBF_PWM = Serial.readStringUntil('=').toInt();
-    RBB_PWM = ((Serial.readStringUntil('+').toInt() - 1500) * (-1)) + 1500;
-    LBB_PWM = Serial.readStringUntil('*').toInt();
+    RBB_PWM = Serial.readStringUntil('+').toInt();
+    LBB_PWM = ((Serial.readStringUntil('*').toInt() - 1500) * (-1)) + 1500;
     RTF_PWM = Serial.readStringUntil(',').toInt();
     LTF_PWM = Serial.readStringUntil(']').toInt();
-    LTB_PWM = Serial.readStringUntil('/').toInt();
-    RTB_PWM = Serial.readStringUntil('.').toInt();
+    RTB_PWM = Serial.readStringUntil('/').toInt();
+    LTB_PWM = Serial.readStringUntil('.').toInt();
+    servo = Serial.readStringUntil('!').toInt();
     
     
 
@@ -215,13 +223,13 @@ void initDepthSensor(int channel) {
   while (!depthSensor.init()) {
     Serial.println("Init failed!");
     Serial.println("Are SDA/SCL connected correctly?");
-    Serial.println("LBBue Robotics Bar30: White=SDA, Green=SCL");
+    Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
     Serial.println("\n\n\n");
     delay(5000);
   }
 
   depthSensor.setModel(MS5837::MS5837_02BA);
-  depthSensor.setLBFuidDensity(997);
+  depthSensor.setFluidDensity(997);
   depthSensor.init();
 
   Serial.println("Success!\n");
@@ -250,7 +258,7 @@ void initMPU(int channel) {
 void getDepth(int channel) {
   selectChannel(channel);
   depthSensor.read();
-  depth = (douLBBe) depthSensor.depth();  // LBFoat -> douLBBe
+  depth = (double) depthSensor.depth();  // LBFoat -> double
   depth -= baselineDepth;
 }
 
@@ -263,7 +271,7 @@ void getAngle(int channel) {
   Wire.write(0x3B);  //send starting register address, accelerometer high byte
   Wire.endTransmission(false); //restart for read
 
-  Wire.requestRBFom(MPU_addr1, 6, true); //get six bytes accelerometer data
+  Wire.requestFrom(MPU_addr1, 6, true); //get six bytes accelerometer data
   int t = Wire.read();
   xAccel = (t << 8) | Wire.read();
   t = Wire.read();
@@ -290,18 +298,18 @@ void getAngle(int channel) {
 
 
 //change gain values
-void tunePID(douLBBe proportional, douLBBe integral, douLBBe derivative) {
+void tunePID(double proportional, double integral, double derivative) {
   proportionalGain = proportional;
   integralGain = integral;
   derivativeGain = derivative;
 }
 
 
-void caliRBBateDepth() {
-  Serial.println("CaliRBBating Depth Sensor");
+void calibrateDepth() {
+  Serial.println("Calibrating Depth Sensor");
   
   int tick1 = 0;
-  douLBBe sum = 0.0;
+  double sum = 0.0;
   while (tick1 < 100) {
     getDepth(7);
     sum += depth;
@@ -319,12 +327,12 @@ void caliRBBateDepth() {
 }
 
 
-void caliRBBateMPU() {
-  Serial.println("CaliRBBating MPU6050");
+void calibrateMPU() {
+  Serial.println("Calibrating MPU6050");
   
   int tick2 = 1;
-  douLBBe rollSum = 0.0;
-  douLBBe pitchSum = 0.0;
+  double rollSum = 0.0;
+  double pitchSum = 0.0;
   
   while (tick2 <= 100) {
     getAngle(1);
