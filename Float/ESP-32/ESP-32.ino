@@ -74,7 +74,7 @@ void initDepthSensor() {
 void getDepth() {
   sensor.read();
   double temp = (double) sensor.depth();
-  if (abs(depth-temp)<0.7) {
+  if (abs(depth-temp)<1.5) {
     depth = temp;
   }
 }
@@ -83,7 +83,7 @@ void transmitData(){
   linearServo.writeMicroseconds(2300);
   Serial.println("transmitting data");
   getData();
-  //insert code here
+  delay(100000000);
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * msg) {
@@ -173,6 +173,7 @@ void listDir(fs::FS &fs, const char * dirname) {
 }
 
 void setup() {
+  Serial.end();
   Serial.begin(115200);
   delay(1000);
 
@@ -189,11 +190,10 @@ void setup() {
 
   linearServo.writeMicroseconds(2300);
   delay(30000);
-  writeFile(SD, "/data_packet1.txt", "MEGALODON ROV DATA PACKET \n");
 }
 
 void loop() {
-  if ((currentIndex > profileTable.size() - 1)||(elapsedTime > 90)) {
+  if ((currentIndex > profileTable.size() - 1)) {
     transmitData();
   } else {
 
@@ -216,10 +216,14 @@ void loop() {
     if ((depth < profileTable[currentIndex].targetDepth + 0.3) && (depth > profileTable[currentIndex].targetDepth - 0.3) && (!targetAchieved))
     {
       targetAchieved = true;
+      appendFile(SD, "/data_packet1.txt", "target reached");
       targetAchievedTime = (int) millis()/1000;
+    } else if ((depth > profileTable[currentIndex].targetDepth + 0.3) || (depth < profileTable[currentIndex].targetDepth - 0.3)) {
+      targetAchieved = false;
     }
     if ((elapsedTime-targetAchievedTime >=30) && (targetAchieved)) {
       targetAchieved = false;
+      appendFile(SD, "/data_packet1.txt", "moving to next target");
       currentIndex++;
     }
 
