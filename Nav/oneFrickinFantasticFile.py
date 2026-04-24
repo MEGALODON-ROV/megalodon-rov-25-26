@@ -16,8 +16,8 @@ BOTTOMCAM = 2
 print("Please plug in EVERYTHING RIGHT NOW!")
 plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
-    FRONTCAM = measure.measuringTaskMain.findCamIndex("FRONT")
-    BOTTOMCAM = measure.measuringTaskMain.findCamIndex("BOTTOM")
+    FRONTCAM = measure.findCamIndex("FRONT")
+    BOTTOMCAM = measure.findCamIndex("BOTTOM")
 
 #navigation = threading.Thread(target=nav_main.nav, daemon=True)
 #navigation.start()
