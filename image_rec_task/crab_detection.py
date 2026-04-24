@@ -7,7 +7,7 @@ from ultralytics import YOLO
 import time
 
 
-model = YOLO("/home/salasaooo/image_rec/CRAB_6FIN.pt") 
+model = YOLO("image_rec_task/CRAB_7FIN.pt") 
 
 # results = model(source=0, show=True, classes=[0]) #trying to only look for EGC in live feed 
 
