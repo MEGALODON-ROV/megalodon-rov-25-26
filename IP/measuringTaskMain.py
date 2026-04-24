@@ -32,7 +32,6 @@ def main(FRONTCAM = 1, BOTTOMCAM = 2):
     usesWindows = input("Do you use a windows computer? (Y/N): ")   # might not implement
     if (usesWindows.lower() == 'n'):
         windows = False
-        print("Bruh. Lock in :(")
 
     shouldCalib = input("Do you want to re-calibrate the camera? (Y/N): ")
     if (shouldCalib.lower() == 'y'):
