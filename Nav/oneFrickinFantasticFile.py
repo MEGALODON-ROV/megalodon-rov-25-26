@@ -8,8 +8,8 @@ import cv2
 # path to other folders (not Nav) so we can import their files
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'IP')))
 import measuringTaskMain as measure
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
-import CRAB_TEST
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
+#import CRAB_TEST
 
 FRONTCAM = 1
 BOTTOMCAM = 2
@@ -35,6 +35,8 @@ def findCamIndex(camSide = "FRONT"):
                         cap.release()
                         cv2.destroyAllWindows()
                         break
+                
+                time.sleep(0.1)     # add a small delay to avoid high CPU usage
 
     return 0
 
@@ -52,7 +54,8 @@ while True:
     if program == "1":
         measure.main(FRONTCAM)
     elif program == "2":
-        CRAB_TEST.imageRec(BOTTOMCAM)
+        print("Image recognition not implemented yet :(")
+        #CRAB_TEST.imageRec(BOTTOMCAM)
     elif program.lower() == "e":
         print("Exiting...")
         break

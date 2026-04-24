@@ -13,6 +13,8 @@ def take_video(camIndex=1):
     # Get the default frame width and height
     frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    crop_width = int(frame_width * 3/5)     # crop to middle 3/5 of the width
+    crop_height = int(frame_height * 1/2)   # crop to middle 1/2 of the height
 
     # Define the codec and create VideoWriter object. 
     # For the VideoWriter func, may have to switch path.
@@ -24,7 +26,7 @@ def take_video(camIndex=1):
     while os.path.exists(videoPath):
         index += 1
         videoPath = os.path.join(base_path, "measuring_vid" + str(index) + ".mp4")
-    out = cv2.VideoWriter(videoPath, fourcc, 20.0, (frame_width, frame_height))
+    out = cv2.VideoWriter(videoPath, fourcc, 20.0, (crop_width, crop_height))
 
     print("Recording video. Press 'q' to stop recording.")
 
@@ -32,14 +34,17 @@ def take_video(camIndex=1):
         ret, frame = cam.read()
 
         if ret:
-            # crop the frame to start from 1/5 way to 4/5 way horizontally, and 1/3 way to 2/3 way vertically
+            # Display the captured frame
+            cv2.imshow('Camera', frame)
+
+            # crop the frame to start from 1/5 way to 4/5 way horizontally, and 1/4 way to 3/4 way vertically
             # need to crop because camera feed is covered at edges by ROV
-            frame = frame[int(frame_height/3):int(2*frame_height/3), int(frame_width/5):int(4*frame_width/5)]
+            frame = frame[int(frame_height/4):int(3*frame_height/4), int(frame_width/5):int(4*frame_width/5)]
             # Write the frame to the output file
             out.write(frame)
 
-            # Display the captured frame
-            cv2.imshow('Camera', frame)
+            # Display the cropped frame
+            cv2.imshow('Cropped', frame)
 
             # Press 'q' to exit the loop
             if cv2.waitKey(1) == ord('q'):
