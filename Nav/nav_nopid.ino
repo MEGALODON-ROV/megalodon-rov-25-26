@@ -1,4 +1,7 @@
 #include <Servo.h>
+#include "MS5837.h"
+
+MS5837 depthSensor;
 
 int RBB_PWM;
 int LBF_PWM;
@@ -37,6 +40,8 @@ void setup() {
   RTB_T.attach(5); // blue
   claw.attach(10);
 
+  initDepthSensor(7);
+
   delay(2000);
 }
 
@@ -58,6 +63,8 @@ void loop() {
     LTB_PWM = Serial.readStringUntil('.').toInt();
     servo = Serial.readStringUntil('!').toInt();
 
+    depthSensor.read()
+
     Serial.println(
                "RBF_PWM: " + String(RBF_PWM) + ", " + 
                "LBF_PWM: " + String(LBF_PWM) + ", " + 
@@ -67,7 +74,8 @@ void loop() {
                "LTF_VERT: " + String(LTF_PWM) + ", " + 
                "RTB_VERT: " + String(RTB_PWM) + ", " +
                "LTB_VERT: " + String(LTB_PWM) + ", " +
-               "servo: " + String(servo));
+               "servo: " + String(servo) + ";" +
+              String(depthSensor.depth()));
 
     LBF_T.writeMicroseconds(LBF_PWM);
     LBB_T.writeMicroseconds(LBB_PWM);
@@ -92,4 +100,27 @@ void loop() {
     
     delay(5);
   }
+}
+
+void initDepthSensor(int channel) {
+  delay(500);
+
+  Serial.println("Intializing Depth Sensor...");
+  selectChannel(channel);
+
+  while (!depthSensor.init()) {
+    Serial.println("Init failed!");
+    Serial.println("Are SDA/SCL connected correctly?");
+    Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
+    Serial.println("\n\n\n");
+    delay(5000);
+  }
+
+  depthSensor.setModel(MS5837::MS5837_02BA);
+  depthSensor.setFluidDensity(997);
+  depthSensor.init();
+
+  Serial.println("Success!\n");
+
+  delay(500);
 }
