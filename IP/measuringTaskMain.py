@@ -1,7 +1,6 @@
 import cv2
 import calibrateCameras as calib
 import video_taking as vid
-from cv2_enumerate_cameras import enumerate_cameras
 
 FRONTCAM = 1
 BOTTOMCAM = 2
