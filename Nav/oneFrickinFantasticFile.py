@@ -1,24 +1,33 @@
 import threading
 import time
-import nav_main
+#import nav_main
 import sys
 import os
 
 # path to other folders (not Nav) so we can import their files
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'IP')))
-import IP.measuringTaskMain as measure
+import measuringTaskMain as measure
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
-import image_rec_task.CRAB_TEST
+import CRAB_TEST
 
-navigation = threading.Thread(target=nav_main.nav, daemon=True)
-navigation.start()
+
+FRONTCAM = 1
+BOTTOMCAM = 2
+print("Please plug in EVERYTHING RIGHT NOW!")
+plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
+if (plugged.lower() == 'y'):
+    FRONTCAM = measure.measuringTaskMain.findCamIndex("FRONT")
+    BOTTOMCAM = measure.measuringTaskMain.findCamIndex("BOTTOM")
+
+#navigation = threading.Thread(target=nav_main.nav, daemon=True)
+#navigation.start()
 
 while True:
     program = input("What program do you want to run? (1: photogrammetry, 2: image rec, E: exit): ")
     if program == "1":
-        measure.main()
+        measure.main(FRONTCAM, BOTTOMCAM)
     elif program == "2":
-        image_rec_task.CRAB_TEST.imageRec()
+        CRAB_TEST.imageRec()
     elif program.lower() == "e":
         print("Exiting...")
         break
