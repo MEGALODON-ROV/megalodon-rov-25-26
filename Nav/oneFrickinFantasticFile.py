@@ -27,16 +27,15 @@ def findCamIndex(camSide = "FRONT"):
                     cv2.imshow('Camera', frame)
 
                     # verify if it's the right camera
-                    if cv2.waitKey(1) == ord('y') or cv2.waitKey(1) == ord('Y'):
+                    key = cv2.waitKey(1) & 0xFF
+                    if key == ord('y') or key == ord('Y'):
                         cap.release()
                         cv2.destroyAllWindows()
                         return i
-                    elif cv2.waitKey(1) == ord('n') or cv2.waitKey(1) == ord('N'):
+                    elif key == ord('n') or key == ord('N'):
                         cap.release()
                         cv2.destroyAllWindows()
                         break
-                
-                time.sleep(0.1)     # add a small delay to avoid high CPU usage
 
     return 0
 
