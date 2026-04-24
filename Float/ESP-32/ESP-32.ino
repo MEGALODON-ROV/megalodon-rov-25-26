@@ -8,6 +8,7 @@
 #include "esp_system.h"
 
 int elapsedTime = 0;
+int tempTime = 0;
 
 const int SCLpin = 21;
 const int SDApin = 22;
@@ -39,11 +40,10 @@ struct ProfileStep {
 };
 
 std::vector<ProfileStep> profileTable = {
-    {1, 1.8}, //depth thingy
-    {1, 0.8},
-    {2, 1.8},
-    {2, 0.8},
-    {2, 0.0}
+    {1, 1.3}, //depth thingy
+    {1, 1.3},
+    {2, 1.3},
+    {2, 1.3}
 };
 
 // initialize pressure sensor with necessary delays
@@ -74,13 +74,15 @@ void initDepthSensor() {
 void getDepth() {
   sensor.read();
   double temp = (double) sensor.depth();
-  if (abs(depth-temp)<1.5) {
+  double difference = depth-temp;
+  if (fabs(difference)<1.5) {
     depth = temp;
   }
 }
 
 void transmitData(){
   linearServo.writeMicroseconds(2300);
+  delay(45000);
   Serial.println("transmitting data");
   getData();
   delay(100000000);
@@ -196,11 +198,12 @@ void loop() {
   if ((currentIndex > profileTable.size() - 1)) {
     transmitData();
   } else {
-
     elapsedTime = (int) millis()/1000;
+    getDepth();
 
     // put your main code here, to run repeatedly:
-    if (abs(profileTable[currentIndex].targetDepth - depth) > 0.05) {
+    double depthDifference = profileTable[currentIndex].targetDepth - depth;
+    if (fabs(depthDifference) > 0.05) {
       servoCurrent = 1500 + (depth - profileTable[currentIndex].targetDepth) * kP;
       if(servoCurrent < servoMin)
       {
@@ -216,21 +219,22 @@ void loop() {
     if ((depth < profileTable[currentIndex].targetDepth + 0.3) && (depth > profileTable[currentIndex].targetDepth - 0.3) && (!targetAchieved))
     {
       targetAchieved = true;
-      appendFile(SD, "/data_packet1.txt", "target reached");
+      appendFile(SD, "/data_packet1.txt", "target reached \n");
       targetAchievedTime = (int) millis()/1000;
     } else if ((depth > profileTable[currentIndex].targetDepth + 0.3) || (depth < profileTable[currentIndex].targetDepth - 0.3)) {
       targetAchieved = false;
     }
     if ((elapsedTime-targetAchievedTime >=30) && (targetAchieved)) {
       targetAchieved = false;
-      appendFile(SD, "/data_packet1.txt", "moving to next target");
+      appendFile(SD, "/data_packet1.txt", "moving to next target \n");
       currentIndex++;
     }
 
-    getDepth();
-
-    dataPacket = String(" MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
-    appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
-    Serial.println(dataPacket);
+    if(elapsedTime > tempTime) {
+      dataPacket = String(" MEGALODON ROV \n") + "Time:" + elapsedTime + "Depth:" + depth + ", servoCurrent: " + servoCurrent + ", targetDepth: " + profileTable[currentIndex].targetDepth;
+      appendFile(SD, "/data_packet1.txt", dataPacket.c_str());
+      Serial.println(dataPacket);
+      tempTime = elapsedTime;
+    }
   }
 }
