@@ -19,14 +19,14 @@ def findCamIndex(camSide = "FRONT"):
         cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
         if cap.isOpened():      # camera exists at the index
             print("Is this {} camera? (Y/N): ".format(camSide))
-            while True:
+            while True:     # display camera feed
                 ret, frame = cap.read()
 
                 if ret:
                     # Display the captured frame
                     cv2.imshow('Camera', frame)
 
-                    # Press 'q' to exit the loop
+                    # verify if it's the right camera
                     if cv2.waitKey(1) == ord('y') or cv2.waitKey(1) == ord('Y'):
                         cap.release()
                         cv2.destroyAllWindows()
