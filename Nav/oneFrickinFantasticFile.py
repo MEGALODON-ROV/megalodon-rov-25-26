@@ -10,7 +10,7 @@ import measuringTaskMain as measure
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
 import CRAB_TEST
 
-
+#1920 (1/5) by 1080 (1/3) pixels
 FRONTCAM = 1
 BOTTOMCAM = 2
 print("Please plug in EVERYTHING RIGHT NOW!")

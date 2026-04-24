@@ -32,6 +32,9 @@ def take_video(camIndex=1):
         ret, frame = cam.read()
 
         if ret:
+            # crop the frame to start from 1/5 way to 4/5 way horizontally, and 1/3 way to 2/3 way vertically
+            # need to crop because camera feed is covered at edges by ROV
+            frame = frame[int(frame_height/3):int(2*frame_height/3), int(frame_width/5):int(4*frame_width/5)]
             # Write the frame to the output file
             out.write(frame)
 
