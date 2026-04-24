@@ -3,6 +3,7 @@ import time
 #import nav_main
 import sys
 import os
+import cv2
 
 # path to other folders (not Nav) so we can import their files
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'IP')))
@@ -10,14 +11,38 @@ import measuringTaskMain as measure
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
 import CRAB_TEST
 
-#1920 (1/5) by 1080 (1/3) pixels
 FRONTCAM = 1
 BOTTOMCAM = 2
+
+def findCamIndex(camSide = "FRONT"):
+    for i in range(10):
+        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+        if cap.isOpened():      # camera exists at the index
+            print("Is this {} camera? (Y/N): ".format(camSide))
+            while True:
+                ret, frame = cap.read()
+
+                if ret:
+                    # Display the captured frame
+                    cv2.imshow('Camera', frame)
+
+                    # Press 'q' to exit the loop
+                    if cv2.waitKey(1) == ord('y') or cv2.waitKey(1) == ord('Y'):
+                        cap.release()
+                        cv2.destroyAllWindows()
+                        return i
+                    elif cv2.waitKey(1) == ord('n') or cv2.waitKey(1) == ord('N'):
+                        cap.release()
+                        cv2.destroyAllWindows()
+                        break
+
+    return 0
+
 print("Please plug in EVERYTHING RIGHT NOW!")
 plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
-    FRONTCAM = measure.findCamIndex("FRONT")
-    BOTTOMCAM = measure.findCamIndex("BOTTOM")
+    FRONTCAM = findCamIndex("FRONT")
+    BOTTOMCAM = findCamIndex("BOTTOM")
 
 #navigation = threading.Thread(target=nav_main.nav, daemon=True)
 #navigation.start()
@@ -25,9 +50,9 @@ if (plugged.lower() == 'y'):
 while True:
     program = input("What program do you want to run? (1: photogrammetry, 2: image rec, E: exit): ")
     if program == "1":
-        measure.main(FRONTCAM, BOTTOMCAM)
+        measure.main(FRONTCAM)
     elif program == "2":
-        CRAB_TEST.imageRec()
+        CRAB_TEST.imageRec(BOTTOMCAM)
     elif program.lower() == "e":
         print("Exiting...")
         break

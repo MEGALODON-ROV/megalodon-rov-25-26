@@ -2,31 +2,7 @@ import cv2
 import calibrateCameras as calib
 import video_taking as vid
 
-def findCamIndex(camSide = "FRONT"):
-    for i in range(10):
-        cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
-        if cap.isOpened():      # camera exists at the index
-            print("Is this {} camera? (Y/N): ".format(camSide))
-            while True:
-                ret, frame = cap.read()
-
-                if ret:
-                    # Display the captured frame
-                    cv2.imshow('Camera', frame)
-
-                    # Press 'q' to exit the loop
-                    if cv2.waitKey(1) == ord('y') or cv2.waitKey(1) == ord('Y'):
-                        cap.release()
-                        cv2.destroyAllWindows()
-                        return i
-                    elif cv2.waitKey(1) == ord('n') or cv2.waitKey(1) == ord('N'):
-                        cap.release()
-                        cv2.destroyAllWindows()
-                        break
-
-    return 0
-
-def main(FRONTCAM = 1, BOTTOMCAM = 2):
+def main(FRONTCAM = 1):
     windows = True
 
     usesWindows = input("Do you use a windows computer? (Y/N): ")   # might not implement

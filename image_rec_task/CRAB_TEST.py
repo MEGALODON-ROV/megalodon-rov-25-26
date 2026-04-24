@@ -6,7 +6,7 @@ import cv2
 from ultralytics import YOLO
 import time
 
-def imageRec():
+def imageRec(BOTTOMCAM = 0):
     model = YOLO("image_rec_task/CRAB_7FIN.pt") #copy path of best.pt 
 
     # results = model(source=0, show=True, classes=[0]) #trying to only look for EGC in live feed 
@@ -15,7 +15,7 @@ def imageRec():
 
 
     #  Setup Camera
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(BOTTOMCAM)
 
 
     if not cam.isOpened():
