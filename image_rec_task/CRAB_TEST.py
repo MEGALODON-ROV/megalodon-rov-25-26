@@ -76,4 +76,5 @@ def imageRec():
 
     print(f"done done")
 
-imageRec()
+if __name__ == "__main__":
+    imageRec()
