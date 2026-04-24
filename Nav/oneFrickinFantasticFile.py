@@ -1,6 +1,6 @@
 import threading
 import time
-#import nav_main
+import nav_main
 import sys
 import os
 import cv2
@@ -8,8 +8,8 @@ import cv2
 # path to other folders (not Nav) so we can import their files
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'IP')))
 import measuringTaskMain as measure
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
-#import CRAB_TEST
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'image_rec_task')))
+import CRAB_TEST
 
 FRONTCAM = 1
 BOTTOMCAM = 2
@@ -45,8 +45,8 @@ if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex("FRONT")
     BOTTOMCAM = findCamIndex("BOTTOM")
 
-#navigation = threading.Thread(target=nav_main.nav, daemon=True)
-#navigation.start()
+navigation = threading.Thread(target=nav_main.nav, daemon=True)
+navigation.start()
 
 while True:
     program = input("What program do you want to run? (1: photogrammetry, 2: image rec, E: exit): ")
