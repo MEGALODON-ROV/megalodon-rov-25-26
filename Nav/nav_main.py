@@ -5,6 +5,7 @@ from time import sleep
 
 FACTOR = 1.004288867 # depth sent by sensor to actual depth
 OFFSET = 0.161498
+displayDepth = False
 
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
@@ -86,11 +87,12 @@ def nav():
             arduino.write(messageToSend) 
 
             received = arduino.readline().decode("ascii")
-            print(received)
-            if ";" in received:
-                PWMs, depth = received.split(";")
-                print(depth)
-                print((float(depth) * FACTOR) + OFFSET)
+            if (displayDepth):
+                print(received)
+                if ";" in received:
+                    PWMs, depth = received.split(";")
+                    print(depth)
+                    print((float(depth) * FACTOR) + OFFSET)
 
             sleep(0.003)
                 

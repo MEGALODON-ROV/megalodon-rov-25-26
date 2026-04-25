@@ -49,16 +49,20 @@ navigation = threading.Thread(target=nav_main.nav, daemon=True)
 navigation.start()
 
 while True:
-    program = input("What program do you want to run? (1: photogrammetry, 2: image rec, E: exit): ")
+    program = input("What program do you want to run? (1: photogrammetry, 2: image rec, 3: show depth, 4: hide depth, E: exit): ")
     if program == "1":
         measure.main(FRONTCAM)
     elif program == "2":
-        print("Image recognition not implemented yet :(")
-        #CRAB_TEST.imageRec(BOTTOMCAM)
+        #print("Image recognition not implemented yet :(")
+        CRAB_TEST.imageRec(BOTTOMCAM)
+    elif program == "3":
+        nav_main.displayDepth = True
+    elif program == "4":
+        nav_main.displayDepth = False
     elif program.lower() == "e":
         print("Exiting...")
         break
     else:
-        print("Invalid input. Please enter 1, 2, or E.")
+        print("Invalid input. Please enter 1, 2, 3, 4, or E.")
 
     time.sleep(1)
