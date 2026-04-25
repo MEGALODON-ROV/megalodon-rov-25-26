@@ -44,8 +44,8 @@ plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex("FRONT")
     print(FRONTCAM)
-    # BOTTOMCAM = findCamIndex("BOTTOM")
-    # print(BOTTOMCAM)
+    BOTTOMCAM = findCamIndex("BOTTOM")
+    print(BOTTOMCAM)
 
 navigation = threading.Thread(target=nav_main.nav, daemon=False)
 navigation.start()
@@ -55,7 +55,7 @@ while True:
     if program == "1":
         measure.main(FRONTCAM)
     elif program == "2":
-        #print("Image recognition not implemented yet :(")
+        print("Image recognition not implemented yet :(")
         pass
     elif program == "3":
         nav_main.displayDepth = True
