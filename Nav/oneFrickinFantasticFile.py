@@ -44,8 +44,8 @@ plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex("FRONT")
     print(FRONTCAM)
-    BOTTOMCAM = findCamIndex("BOTTOM")
-    print(BOTTOMCAM)
+    # BOTTOMCAM = findCamIndex("BOTTOM")
+    # print(BOTTOMCAM)
 
 navigation = threading.Thread(target=nav_main.nav, daemon=False)
 navigation.start()
@@ -56,7 +56,7 @@ while True:
         measure.main(FRONTCAM)
     elif program == "2":
         #print("Image recognition not implemented yet :(")
-        CRAB_TEST.imageRec(BOTTOMCAM)
+        pass
     elif program == "3":
         nav_main.displayDepth = True
     elif program == "4":
