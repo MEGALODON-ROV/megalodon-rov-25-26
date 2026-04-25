@@ -2,7 +2,7 @@ import cv2
 import calibrateCameras as calib
 import video_taking as vid
 
-def main(FRONTCAM = 1):
+def main(front = 1):
     windows = True
 
     usesWindows = input("Do you use a windows computer? (Y/N): ")   # might not implement
@@ -19,14 +19,14 @@ def main(FRONTCAM = 1):
             print("3. Full checkerboard must be in view of camera.")
             print("Hint: take > 40 pictures to be very safe!")
             print("Press 's' to save an image, and 'q' to quit the camera feed.")
-            calib.calibrate_camera(FRONTCAM)
+            calib.calibrate_camera(front)
 
     shouldTakeVid = input("Do you want to take a video for measuring now? (Y/N): ")
     if (shouldTakeVid.lower() == 'n'):
         print("Womp. Run me when you're ready next time :(")
     else:
         print("Hint: Please move slowly while taking the video to avoid blurring!")
-        videoPath = vid.take_video(FRONTCAM)
+        videoPath = vid.take_video(front)
         print("Path to undistorted video: {}".format(videoPath))
 
 if __name__ == "__main__":

@@ -43,7 +43,9 @@ print("Please plug in EVERYTHING RIGHT NOW!")
 plugged = input("Have you plugged in EVERYTHING? (Y/N): ")
 if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex("FRONT")
+    print(FRONTCAM)
     BOTTOMCAM = findCamIndex("BOTTOM")
+    print(BOTTOMCAM)
 
 navigation = threading.Thread(target=nav_main.nav, daemon=False)
 navigation.start()

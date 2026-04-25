@@ -13,7 +13,7 @@ def take_video(camIndex=1):
     # Get the default frame width and height
     frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    crop_width = int(frame_width)     # no need to crop
+    crop_width = int(frame_width*0.5)     # no need to crop
     crop_height = int(frame_height*(4/5))   # crop out top 1/5 of frame
 
     # Define the codec and create VideoWriter object. 
@@ -39,7 +39,7 @@ def take_video(camIndex=1):
 
             # crop the frame to go full way horizontally, and 1/5 way to end way vertically
             # need to crop because camera feed is covered at edges by ROV
-            frame = frame[int(frame_height/5):int(frame_height), int(0):int(frame_width)]
+            frame = frame[0:int(frame_height*(4/5)), int(frame_width*0.25):int(frame_width*0.75)]
             # Write the frame to the output file
             out.write(frame)
 
