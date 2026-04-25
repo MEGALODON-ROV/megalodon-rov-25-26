@@ -6,8 +6,8 @@ import cv2
 from ultralytics import YOLO
 import time
 
-def imageRec(BOTTOMCAM = 0):
-    model = YOLO("image_rec_task/CRAB_7FIN.pt") #copy path of best.pt 
+def imageRec(bottom = 0):
+    model = YOLO("image_rec_task/CRAB_12FIN.pt") #copy path of best.pt 
 
     # results = model(source=0, show=True, classes=[0]) #trying to only look for EGC in live feed 
 
@@ -15,7 +15,7 @@ def imageRec(BOTTOMCAM = 0):
 
 
     #  Setup Camera
-    cam = cv2.VideoCapture(BOTTOMCAM)
+    cam = cv2.VideoCapture(bottom, cv2.CAP_DSHOW)
 
 
     if not cam.isOpened():
@@ -42,7 +42,7 @@ def imageRec(BOTTOMCAM = 0):
         ret, frame = cam.read()
         if not ret:
             break
-        results = model(frame, conf=0.5, iou=0.5, classes=[0])
+        results = model(frame, conf=0.75, iou=0.5, classes=[0])
         result = results[0] #only egc 
 
 
@@ -64,8 +64,14 @@ def imageRec(BOTTOMCAM = 0):
 
         cv2.imshow('LIVE FEED', annotated_frame)
 
-        if cv2.waitKey(1) == ord('q'):
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
             break
+        elif key == ord('f'):
+            cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))
+            cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+            cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
 
 
 

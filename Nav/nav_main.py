@@ -5,7 +5,7 @@ from time import sleep
 
 FACTOR = 1.004288867 # depth sent by sensor to actual depth
 OFFSET = 0.161498
-displayDepth = True
+displayDepth = False
 loop = True
 
 # CHANGE PORT ACCORDINGLY
