@@ -56,7 +56,7 @@ while True:
         measure.main(FRONTCAM)
     elif program == "2":
         #print("Image recognition not implemented yet :(")
-        CRAB_TEST.imageRec(BOTTOMCAM)
+        CRAB_TEST.imageRec(FRONTCAM)
     elif program == "3":
         nav_main.displayDepth = True
     elif program == "4":
