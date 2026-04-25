@@ -87,9 +87,10 @@ def nav():
             # construct string, send to arduino, received info back
             messageToSend = math_func.makeString(Lx, Ly, Rx, A, B, C, D, throttle_y, throttle_x).encode("ascii")
 
-            # print("about to send msg")
-            arduino.write(messageToSend) 
-            # print("msg sent")
+            try:
+                arduino.write(messageToSend) 
+            except Exception:
+                print("no connection")
 
             received = arduino.readline().decode("ascii")
             # print("received data")
