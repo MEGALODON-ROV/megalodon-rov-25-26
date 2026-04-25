@@ -10,7 +10,7 @@ loop = True
 
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
-arduino = serial.Serial('COM5', 9600)
+arduino = serial.Serial('COM3', 9600)
 
 pygame.init()
 pygame.joystick.init()
@@ -18,7 +18,7 @@ clock = pygame.time.Clock()
 
 def nav():
     global loop
-    print("entered thread")
+    # print("entered thread")
     # message contains axis/button values
     message = [] 
     # [0] = LX
@@ -44,7 +44,7 @@ def nav():
     while loop:
         message = [] #clearing the contents of the list with each loop iteration
         
-        print("getting joystick data")
+        # print("getting joystick data")
         # event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -83,16 +83,16 @@ def nav():
             throttle_y = message[2]
             throttle_x = message[4]
 
-            print("constructing message to send to arduino")
+            # print("constructing message to send to arduino")
             # construct string, send to arduino, received info back
             messageToSend = math_func.makeString(Lx, Ly, Rx, A, B, C, D, throttle_y, throttle_x).encode("ascii")
 
-            print("about to send msg")
+            # print("about to send msg")
             arduino.write(messageToSend) 
-            print("msg sent")
+            # print("msg sent")
 
             received = arduino.readline().decode("ascii")
-            print("received data")
+            # print("received data")
             if (displayDepth):
                 print(received)
                 if ";" in received:
