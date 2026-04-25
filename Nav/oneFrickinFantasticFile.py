@@ -45,7 +45,7 @@ if (plugged.lower() == 'y'):
     FRONTCAM = findCamIndex("FRONT")
     BOTTOMCAM = findCamIndex("BOTTOM")
 
-navigation = threading.Thread(target=nav_main.nav, daemon=True)
+navigation = threading.Thread(target=nav_main.nav, daemon=False)
 navigation.start()
 
 while True:
@@ -61,6 +61,7 @@ while True:
         nav_main.displayDepth = False
     elif program.lower() == "e":
         print("Exiting...")
+        nav_main.loop = False
         break
     else:
         print("Invalid input. Please enter 1, 2, 3, 4, or E.")

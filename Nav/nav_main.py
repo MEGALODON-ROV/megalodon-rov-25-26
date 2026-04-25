@@ -6,6 +6,7 @@ from time import sleep
 FACTOR = 1.004288867 # depth sent by sensor to actual depth
 OFFSET = 0.161498
 displayDepth = False
+loop = True
 
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
@@ -16,6 +17,7 @@ pygame.joystick.init()
 clock = pygame.time.Clock()
 
 def nav():
+    print("entered thread")
     # message contains axis/button values
     message = [] 
     # [0] = LX
@@ -33,8 +35,6 @@ def nav():
     # [12] = LJ
     # [13] = RJ
 
-    loop = True
-
     # this make code work instant
     sleep(1)
 
@@ -43,6 +43,7 @@ def nav():
     while loop:
         message = [] #clearing the contents of the list with each loop iteration
         
+        print("getting joystick data")
         # event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -81,12 +82,16 @@ def nav():
             throttle_y = message[2]
             throttle_x = message[4]
 
+            print("constructing message to send to arduino")
             # construct string, send to arduino, received info back
             messageToSend = math_func.makeString(Lx, Ly, Rx, A, B, C, D, throttle_y, throttle_x).encode("ascii")
 
+            print("about to send msg")
             arduino.write(messageToSend) 
+            print("msg sent")
 
             received = arduino.readline().decode("ascii")
+            print("received data")
             if (displayDepth):
                 print(received)
                 if ";" in received:
