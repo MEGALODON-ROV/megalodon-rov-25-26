@@ -40,7 +40,7 @@ void setup() {
   RTB_T.attach(5); // blue
   claw.attach(10);
 
-  initDepthSensor(7);
+  // initDepthSensor(7);
 
   delay(2000);
 }
@@ -63,7 +63,7 @@ void loop() {
     LTB_PWM = Serial.readStringUntil('.').toInt();
     servo = Serial.readStringUntil('!').toInt();
 
-    depthSensor.read()
+    depthSensor.read();
 
     Serial.println(
                "RBF_PWM: " + String(RBF_PWM) + ", " + 
@@ -74,8 +74,8 @@ void loop() {
                "LTF_VERT: " + String(LTF_PWM) + ", " + 
                "RTB_VERT: " + String(RTB_PWM) + ", " +
                "LTB_VERT: " + String(LTB_PWM) + ", " +
-               "servo: " + String(servo) + ";" +
-              String(depthSensor.depth()));
+               "servo: " + String(servo));
+              // String(depthSensor.depth()));
 
     LBF_T.writeMicroseconds(LBF_PWM);
     LBB_T.writeMicroseconds(LBB_PWM);
@@ -102,25 +102,25 @@ void loop() {
   }
 }
 
-void initDepthSensor(int channel) {
-  delay(500);
+// void initDepthSensor(int channel) {
+//   delay(500);
 
-  Serial.println("Intializing Depth Sensor...");
-  selectChannel(channel);
+//   Serial.println("Intializing Depth Sensor...");
+//   selectChannel(channel);
 
-  while (!depthSensor.init()) {
-    Serial.println("Init failed!");
-    Serial.println("Are SDA/SCL connected correctly?");
-    Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
-    Serial.println("\n\n\n");
-    delay(5000);
-  }
+//   while (!depthSensor.init()) {
+//     Serial.println("Init failed!");
+//     Serial.println("Are SDA/SCL connected correctly?");
+//     Serial.println("Blue Robotics Bar30: White=SDA, Green=SCL");
+//     Serial.println("\n\n\n");
+//     delay(5000);
+//   }
 
-  depthSensor.setModel(MS5837::MS5837_02BA);
-  depthSensor.setFluidDensity(997);
-  depthSensor.init();
+//   depthSensor.setModel(MS5837::MS5837_02BA);
+//   depthSensor.setFluidDensity(997);
+//   depthSensor.init();
 
-  Serial.println("Success!\n");
+//   Serial.println("Success!\n");
 
-  delay(500);
-}
+//   delay(500);
+// }
