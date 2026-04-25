@@ -8,7 +8,7 @@ OFFSET = 0.161498
 
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
-arduino = Serial('COM4', 9600)
+arduino = Serial('COM3', 9600)
 
 pygame.init()
 pygame.joystick.init()
@@ -91,7 +91,7 @@ while loop:
         # print(depth)
         # print((float(depth) * FACTOR) + OFFSET)
 
-        sleep(0.003)
+        # sleep(0.03)
             
 # ---------- END MAIN PROGRAM LOOP ---------- #
 

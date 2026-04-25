@@ -5,18 +5,19 @@ from time import sleep
 
 FACTOR = 1.004288867 # depth sent by sensor to actual depth
 OFFSET = 0.161498
-displayDepth = False
+displayDepth = True
 loop = True
 
 # CHANGE PORT ACCORDINGLY
 # /dev/cu.usbmodem21301 for Mac
-arduino = serial.Serial('COM3', 9600)
+arduino = serial.Serial('COM5', 9600)
 
 pygame.init()
 pygame.joystick.init()
 clock = pygame.time.Clock()
 
 def nav():
+    global loop
     print("entered thread")
     # message contains axis/button values
     message = [] 
